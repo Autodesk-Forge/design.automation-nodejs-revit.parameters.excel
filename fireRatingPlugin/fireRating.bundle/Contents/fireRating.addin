@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="DBApplication">
+    <Name>ExportFireRatingToExcel</Name>
+    <Assembly>.\FireRating.dll</Assembly>
+    <AddInId>555039fb-8871-4f03-9860-f18828b45f2b</AddInId>
+    <FullClassName>FireRating.HandleFireRatingParams</FullClassName>
+    <Description>"Export and Import Fire Rating to|From Excel."</Description>
+    <VendorId>Autodesk</VendorId>
+    <VendorDescription>Autodesk</VendorDescription>
+  </AddIn>
+</RevitAddIns>
