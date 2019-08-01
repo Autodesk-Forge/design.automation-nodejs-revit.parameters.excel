@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Autodesk Revit Paramete Upgrader Online</title>
+  <title>Excel Export & Import</title>
   <meta charset="utf-8" />
   <!-- Common packages: jQuery, Bootstrap, jsTree -->
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -13,8 +13,8 @@
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" />
 
   <!-- Autodesk Forge Viewer files -->
-  <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/style.min.css?v=v6.0" type="text/css">
-  <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/viewer3D.min.js?v=v6.0"></script>
+  <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.min.css" type="text/css">
+  <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.min.js"></script>
 
     <!-- this project files -->
   <link href="css/main.css" rel="stylesheet" />
@@ -23,6 +23,7 @@
   <script src="/js/ForgeDesignAutomation.js"></script>
   <script src="/js/ForgeTree.js"></script>
   <script src="/js/ForgeViewer.js"></script>
+  <script src="/js/ViewerExtension.js"></script>
 </head>
 
 <body>
@@ -86,92 +87,68 @@
       </div>
 
       <div class="col-sm-6 fill">
-
         <div class="row fill">
-          <div class="col-sm-1"></div>
-          <div class="col-sm-10 fill">
-
+          <div class="col-sm-11 fill">
             <div style="padding-top: 10px; text-align: center;">
-              <h2><b>View Revit model</b></h2>
+              <h2><b>Model Viewer</b></h2>
             </div>
-
             <div id="forgeViewer">
             </div>
             <div class="col-sm-1"></div>
-
           </div>
-
         </div>
-      </div>
-      
+      </div>      
       <div class="col-sm-3 fill">
         <div class="row">
             <div style="padding-top: 10px; text-align: center;">
-                <h2><b>Revit Parameters Setting</b></h2>
+                <h2><b>Revit Excel Export & Import</b></h2>
             </div>
           </div>
         <div class="row ">
           <div style="padding-top: 10px; text-align: center;">
             <form class="bs-example bs-example-form" role="form">
                 <div class="row">
-                    <div style="padding-top: 10px; text-align: center;">
-                        <div class="col-lg-6">
-                            <div class="thumbnail">
-                                <img src="/res/fireRating.png" class="img-rounded" width="100px" height="=100px" alt="Include Type Fire Rating">
-                                <div class="caption">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <input type="checkbox" id='includeFireRating' checked=true>
-                                        </span>
-                                        <label class="form-control">
-                                            Fire Rating <span class="badge badge-pill badge-primary" id='walls'></span>
-
-                                        </label>
-                                    </div><!-- /input-group -->
-                                    </p>
-                                </div>
-                            </div>
+                  <div style="padding-top: 10px; text-align: left;">
+                      <div class="col-lg-12">
+                          <div style="text-align: left;">
+                              <label>Select parameters:</label>
                         </div>
-                        <div class="col-lg-6">
-                            <div class="thumbnail">
-                                <img src="/res/comments.jpg" class="img-rounded" width="100px" height="=100px" alt="Include Instance Comments">
-                                <div class="caption">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <input type="checkbox" id='includeComments' checked=true>
-                                        </span>
-                                        <label class="form-control">
-                                            Comments
-                                            <span class="badge badge-pill badge-primary" id='floors'></span>
-                                        </label>
-                                    </div><!-- /input-group -->
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        <div class="input-group">
+                          <span class="input-group-addon">
+                              <input type="checkbox" id='includeFireRating' checked=true>
+                          </span>
+                          <label class="form-control">Door Type Fire Rating </label>
+                      </div><!-- /input-group -->
+                      <div class="input-group">
+                        <span class="input-group-addon">
+                            <input type="checkbox" id='includeComments' checked=true>
+                        </span>
+                        <label class="form-control"> Door Instance Comments </label>
+                    </div><!-- /input-group -->
+                      </div>
+                  </div>
+              </div>
+            <br>
                 <div class="row">
-                    <div style="padding-top: 10px; text-align: center;">
+                    <div style="padding-top: 10px; text-align: left;">
                         <div class="col-lg-12">
+                            <div style="text-align: left;">
+                                <label>Export or Import:</label>
+                          </div>
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <input type="radio" name='exportOrImport' value='export' checked>
                                 </span>
-                                <label class="form-control">Export Revit parameters To Excel</label>
-                                <!-- <input type="text" class="form-control"> -->
+                                <label class="form-control">Export parameters To Excel</label>
                             </div><!-- /input-group -->
-                            <br>
                             <div class="input-group">
                                 <span class="input-group-addon">
                                     <input type="radio" name='exportOrImport' value='import'>
                                 </span>
-                                <label class="form-control">Import Revit parameters from Excel</label>
-                            </div><!-- /input-group -->
-
-                          
+                                <label class="form-control">Import parameters from Excel</label>
+                            </div><!-- /input-group -->                          
                             <div class="form-group" id="importSharedParameters" hidden>
-                                <label for="inputFile">Input Spreadsheet file</label>
+                                <label for="inputFile">Input Spreadsheet file( Please export first to check the Excel format )</label>
                                 <input type="file" class="form-control-file" id="inputFile">
                             </div>
                         </div>
@@ -188,15 +165,12 @@
                   <button class="btn btn-primary" id="startWorkitem">
                     <span class="glyphicon glyphicon-play"></span>Execute
                   </button>
-                  <button class="btn btn-primary" id="cancelBtn">
+                  <button class="btn btn-primary" id="cancelBtn" disabled>
                     <span class="glyphicon glyphicon-stop"></span>Cancel
                   </button>
                 </div>
               </div>
-            <br />
-
-
-            
+            <br />       
             <div class="row">
                 <div style="text-align: left;">
                   <label id="statusText">
@@ -250,7 +224,7 @@
             </div>
             And this App Name:
             <div class="input-group">
-              <input type="text" readonly="true" aria-describedby="CopyAppName" id="AppName" class="form-control" value="Revit File Upgrader Sample" />
+              <input type="text" readonly="true" aria-describedby="CopyAppName" id="AppName" class="form-control" value="Excel Export & Import Sample" />
               <span class="input-group-addon" style="cursor: pointer" data-clipboard-target="#AppName" id="CopyAppName">Copy
                 to clipboard</span>
             </div>

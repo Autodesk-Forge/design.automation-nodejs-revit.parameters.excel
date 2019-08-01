@@ -345,7 +345,7 @@ namespace FireRating
 
             if (includeFireRating)
             {
-                Sheet sheet = book.addSheet("Revit Door Type FireRating");
+                Sheet sheet = book.addSheet("Door Type FireRating");
                 sheet.writeStr(1, 1, "Element ID");
                 sheet.writeStr(1, 2, "Unique ID");
                 sheet.writeStr(1, 3, "Family Name");
@@ -383,7 +383,7 @@ namespace FireRating
             }
             if ( includeComments)
             {
-                Sheet sheet = book.addSheet("Revit Door Instance Comments");
+                Sheet sheet = book.addSheet("Door Instance Comments");
                 sheet.writeStr(1, 1, "Element ID");
                 sheet.writeStr(1, 2, "Unique ID");
                 sheet.writeStr(1, 3, "Instance Name");

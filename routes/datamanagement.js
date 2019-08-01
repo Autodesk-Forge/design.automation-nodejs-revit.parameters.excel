@@ -16,9 +16,10 @@
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////
 const fs = require('fs');
-const { FoldersApi, ObjectsApi, PostBucketsSigned } = require('forge-apis');
+const { FoldersApi, ObjectsApi, BucketsApi, PostBucketsSigned } = require('forge-apis');
 const { OAuth } = require('./common/oauthImp');
 const multer  = require('multer');
+const { designAutomation }= require('../config');
 
 const { 
     createFolderBody, 
@@ -165,22 +166,32 @@ router.post('/datamanagement/v1/oss/object', multer({ dest: 'uploads/' }).single
         if (err) {
             next(err);
         }
-        try {
-            // use 2 legged token for design automation
-            const oauth = new OAuth(req.session);
-            const oauth_client = oauth.get2LeggedClient();;
-            const oauth_token = await oauth_client.authenticate();
+        // use 2 legged token for design automation
+        const oauth = new OAuth(req.session);
+        const oauth_client = oauth.get2LeggedClient();;
+        const oauth_token = await oauth_client.authenticate();
 
+        const bucketKey = designAutomation.revit_IO_Nick_Name.toLowerCase() + '_designautomation';
+        const opt = {
+            bucketKey: bucketKey,
+            policyKey: 'transient',
+        }
+        try {
+            await new BucketsApi().createBucket(opt, {}, oauth_client, oauth_token);
+        }catch(err){
+        };
+
+        try{
+            const objectApi = new ObjectsApi();
             // Upload an object to bucket using [ObjectsApi](https://github.com/Autodesk-Forge/forge-api-nodejs-client/blob/master/docs/ObjectsApi.md#uploadObject).
-            const object = await new ObjectsApi().uploadObject(req.body.bucketKey, req.file.originalname, data.length, data, {}, oauth_client, oauth_token);
-            const signedObj =  await new ObjectsApi().createSignedResource(object.body.bucketKey, object.body.objectKey, new PostBucketsSigned(minutesExpiration=50), 'readwrite', oauth_client, oauth_token )
+            const object = await objectApi.uploadObject(bucketKey, req.file.originalname, data.length, data, {}, oauth_client, oauth_token);
+            const signedObj =  await objectApi.createSignedResource(bucketKey, object.body.objectKey, new PostBucketsSigned(minutesExpiration=50), {access:'readwrite'}, oauth_client, oauth_token )
             res.status(200).end( signedObj.body.signedUrl);
         } catch (err) {
             next(err);
         }
     });
 });
-
 
 
 module.exports = router;

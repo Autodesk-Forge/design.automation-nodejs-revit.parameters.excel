@@ -235,10 +235,7 @@ function exportExcel(inputRvtUrl, inputJson, outputExlUrl, access_token_3Legged,
 
                      outputXls: {
                         verb: 'put',
-                        url: outputExlUrl,
-                        Headers: {
-                            Authorization: 'Bearer ' + access_token_2Legged.access_token
-                        },
+                        url: outputExlUrl
                     },
                     onComplete: {
                         verb: "post",
@@ -271,7 +268,8 @@ function exportExcel(inputRvtUrl, inputJson, outputExlUrl, access_token_3Legged,
                     workitemId: resp.id,
                     projectId: null,
                     createVersionData: null,
-                    access_token_3Legged: null
+                    access_token_3Legged: null,
+                    outputUrl: outputExlUrl
                 })
 
                 if (response.statusCode >= 400) {

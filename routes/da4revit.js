@@ -17,10 +17,14 @@
 /////////////////////////////////////////////////////////////////////
 
 const express = require('express');
+const { designAutomation }= require('../config');
 
 const {
     ItemsApi,
     VersionsApi,
+    BucketsApi,
+    ObjectsApi,
+    PostBucketsSigned
 } = require('forge-apis');
 
 const { OAuth } = require('./common/oauthImp');
@@ -37,7 +41,7 @@ const {
 } = require('./common/da4revitImp')
 
 const SOCKET_TOPIC_WORKITEM = 'Workitem-Notification';
-const TempOutputUrl = 'https://developer.api.autodesk.com/oss/v2/signedresources/09ed7ddd-4548-4ce6-b7e1-b662ca608e65?region=US';
+const Temp_Output_File_Name = 'RevitParams.xls';
 
 let router = express.Router();
 
@@ -61,33 +65,49 @@ router.use(async (req, res, next) => {
 /// Export parameters to Excel from Revit
 ///////////////////////////////////////////////////////////////////////
 router.get('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) => {
-    const inputJson             = req.query;
-    const inputRvtUrl = (req.params.version_storage); 
+    const inputJson = req.query;
+    const inputRvtUrl = (req.params.version_storage);
 
     if ( inputJson === '' || inputRvtUrl === '') {
         res.status(400).end('make sure the input version id has correct value');
         return;
     }
 
+    ////////////////////////////////////////////////////////////////////////////////
+    // use 2 legged token for design automation
+    const oauth = new OAuth(req.session);
+    const oauth_client = oauth.get2LeggedClient();;
+    const oauth_token = await oauth_client.authenticate();
+
+    // create the temp output storage
+    const bucketKey = designAutomation.revit_IO_Nick_Name.toLowerCase() + '_designautomation';
+    const opt = {
+        bucketKey: bucketKey,
+        policyKey: 'transient',
+    }
     try {
-        ////////////////////////////////////////////////////////////////////////////////
-        // use 2 legged token for design automation
-        const oauth = new OAuth(req.session);
-        const oauth_client = oauth.get2LeggedClient();;
-        const oauth_token = await oauth_client.authenticate();
-        let result = await exportExcel(inputRvtUrl, inputJson, TempOutputUrl, req.oauth_token, oauth_token);
+        await new BucketsApi().createBucket(opt, {}, oauth_client, oauth_token);
+    } catch (err) { // catch the exception while bucket is already there
+    };
+
+    try {
+        const objectApi = new ObjectsApi();
+        const object = await objectApi.uploadObject(bucketKey, Temp_Output_File_Name, 0, '', {}, oauth_client, oauth_token);
+        const signedObj = await objectApi.createSignedResource(bucketKey, object.body.objectKey, new PostBucketsSigned(minutesExpiration = 50), {access:'readwrite'}, oauth_client, oauth_token)
+
+        let result = await exportExcel(inputRvtUrl, inputJson, signedObj.body.signedUrl, req.oauth_token, oauth_token);
         if (result === null || result.statusCode !== 200) {
-            console.log('failed to upgrade the revit file');
-            res.status(500).end('failed to upgrade the revit file');
+            console.log('failed to export the excel file');
+            res.status(500).end('failed to export the excel file');
             return;
         }
-        console.log('Submitted the workitem: '+ result.body.id);
-        const upgradeInfo = {
+        console.log('Submitted the workitem: ' + result.body.id);
+        const exportInfo = {
             "workItemId": result.body.id,
-            "workItemStatus": result.body.status
+            "workItemStatus": result.body.status,
+            "ExtraInfo": null
         };
-        res.status(200).end(JSON.stringify(upgradeInfo));
-
+        res.status(200).end(JSON.stringify(exportInfo));
     } catch (err) {
         console.log('get exception while exporting parameters to Excel')
         let workitemStatus = {
@@ -181,11 +201,12 @@ router.post('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) 
             return;
         }
         console.log('Submitted the workitem: '+ result.body.id);
-        const upgradeInfo = {
+        const exportInfo = {
             "workItemId": result.body.id,
-            "workItemStatus": result.body.status
+            "workItemStatus": result.body.status,
+            "ExtraInfo": null
         };
-        res.status(200).end(JSON.stringify(upgradeInfo));
+        res.status(200).end(JSON.stringify(exportInfo));
 
     } catch (err) {
         console.log('get exception while importing parameters from Excel')
@@ -260,7 +281,8 @@ router.post('/callback/designautomation', async (req, res, next) => {
 
     let workitemStatus = {
         'WorkitemId': req.body.id,
-        'Status': "Success"
+        'Status': "Success",
+        'ExtraInfo' : null
     };
     if (req.body.status === 'success') {
         const workitem = workitemList.find( (item) => {
@@ -272,11 +294,12 @@ router.post('/callback/designautomation', async (req, res, next) => {
             return;
         }
         let index = workitemList.indexOf(workitem);
-        workitemStatus.Status = 'Success';
-        global.MyApp.SocketIo.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
-        console.log("Post handle the workitem:  " + workitem.workitemId);
 
         if (workitem.createVersionData !== null) {
+            workitemStatus.Status = 'Success';
+            global.MyApp.SocketIo.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
+            console.log("Create new version by the workitem:  " + workitem.workitemId);
+
             try {
                 const versions = new VersionsApi();
                 version = await versions.postVersion(workitem.projectId, workitem.createVersionData, req.oauth_client, workitem.access_token_3Legged);
@@ -287,13 +310,13 @@ router.post('/callback/designautomation', async (req, res, next) => {
                     console.log('Successfully created a new version of the file');
                     workitemStatus.Status = 'Completed';
                 }
-                // global.MyApp.SocketIo.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
             } catch (err) {
                 console.log(err);
                 workitemStatus.Status = 'Failed';
             }
         } else {
             workitemStatus.Status = 'Completed';
+            workitemStatus.ExtraInfo = workitem.outputUrl;
         }
         global.MyApp.SocketIo.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
         // Remove the workitem after it's done

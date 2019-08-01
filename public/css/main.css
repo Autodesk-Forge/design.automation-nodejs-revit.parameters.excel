@@ -4,7 +4,7 @@
 }
 
 .fill{
-  height: calc(100vh - 100px);
+  height: calc(100vh - 150px);
 }
 
 body {
@@ -15,12 +15,12 @@ body {
 #sourceHubs {
   overflow: auto;
   width: 100%;
-  height: calc(100vh - 150px);
+  height: calc(100vh - 200px);
 }
 
 
 #forgeViewer {
   width: 100%;
   /*height: 100%;*/
-  height: calc(100vh - 600px);
+  height: calc(100vh - 200px);
 }
