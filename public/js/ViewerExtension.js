@@ -33,14 +33,14 @@ CustomPropertyPanel.prototype.setProperties = function (properties, options) {
 
     // add your custom properties here
     // for example, let's show the dbId and externalId
-    var _this = this;
+    var that = this;
 
     this.removeAllProperties();
     this.viewer.getProperties(this.nodeId, function (props) {
         props.properties.forEach((prop) => {
             if (prop.displayName === "Fire Rating"
                 || prop.displayName === "Comments")
-                _this.addProperty(prop.displayName, prop.displayValue, prop.displayCategory);
+                that.addProperty(prop.displayName, prop.displayValue, prop.displayCategory);
         })
     })
     this.resizeToContent();
@@ -49,10 +49,7 @@ CustomPropertyPanel.prototype.setProperties = function (properties, options) {
 
 CustomPropertyPanel.prototype.setNodeProperties = function (nodeId) {
     Autodesk.Viewing.Extensions.ViewerPropertyPanel.prototype.setNodeProperties.call(this, nodeId);
-    this.nodeId = nodeId; // store the dbId for later use
-    
-    this.resizeToContent();
-    this.respositionPanel();
+    this.nodeId = nodeId; // store the dbId for later use    
 };
 
 
@@ -151,9 +148,8 @@ CustomPropertyPanelExtension.prototype.onToolbarCreated = function (e) {
 
 
 CustomPropertyPanelExtension.prototype.onSelectionChanged = function (e) {
-
-    this.panel.resizeToContent();
-    this.panel.respositionPanel();
+    // this.panel.resizeToContent();
+    // this.panel.respositionPanel();
   }
 
 Autodesk.Viewing.theExtensionManager.registerExtension('CustomPropertyPanelExtension', CustomPropertyPanelExtension);

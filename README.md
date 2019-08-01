@@ -1,4 +1,4 @@
-# design.automation-nodejs-revit.file.upgrader
+# design.automation-nodejs-revit.parameters.export.import
 
 [![Node.js](https://img.shields.io/badge/Node.js-8.0-blue.svg)](https://nodejs.org/)
 [![npm](https://img.shields.io/badge/npm-4.0-blue.svg)](https://www.npmjs.com/)
@@ -17,18 +17,17 @@
 
 # Description
 
-This sample demostrated how to upgrade Revit project/family/template to the latest version using Design Automation for Revit API, including upgrade one file or one folder.
+This sample demostrated how to export & import Revit parameters to Excel.
 
 # Thumbnail
 ![thumbnail](/thumbnail.png)
 
 # Live Demo
-[https://fileupgradersample.herokuapp.com/](https://fileupgradersample.herokuapp.com/)
+[https://revitexcel.herokuapp.com/](https://revitexcel.herokuapp.com/)
 
 # Main Parts of The Work
 1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./FileUpgrader/PlugIn/) 
 2. Create your App, upload the AppBundle, define your Activity and test the workitem with the Postman collection under [Postman Collection](./FileUpgrader/PostmanCollection/) 
-
 3. Create the Web App to call the workitem.
 
 # Web App Setup
@@ -71,7 +70,6 @@ Mac OSX/Linux (Terminal)
     export FORGE_CALLBACK_URL=<<YOUR CALLBACK URL>>
     export FORGE_WEBHOOK_URL=<<YOUR DESIGN AUTOMATION FOR REVIT CALLBACK URL>>
     export REVIT_IO_NICK_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT NICK NAME>>
-    export REVIT_IO_APP_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT APP NAME>>
     export REVIT_IO_ACTIVITY_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY NAME>>
     npm start
 
@@ -83,7 +81,6 @@ Windows (use **Node.js command line** from Start menu)
     set FORGE_CALLBACK_URL=<<YOUR CALLBACK URL>>
     set FORGE_WEBHOOK_URL=<<YOUR DESIGN AUTOMATION FOR REVIT CALLBACK URL>>
     set REVIT_IO_NICK_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT NICK NAME>>
-    set REVIT_IO_APP_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT APP NAME>>
     set REVIT_IO_ACTIVITY_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY NAME>>
     npm start
 
@@ -91,32 +88,9 @@ Windows (use **Node.js command line** from Start menu)
 
 Open the browser: [http://localhost:3000](http://localhost:3000), there are 2 ways to upgrade files: 
 
-1. Select Revit file in BIM360 Hub from Source File/Folder, Right Click and select `Upgrade to Revit 2019`. It will create a new version after successfully upgraded.
-2. Select Source Folder and Destination Folder, then click `Upgrade`, it will upgrade all the files under the folder to destinated folder.
+Select Revit file version in BIM360 Hub to view the Model, Select parameters which you want to export|import, choose either export or import and click 'Execute'.
 
-## Main Backend API used
 
-### File upgrade API based on Design Automation API at **routes/da4revit.js**
-- POST      /api/forge/da4revit/v1/upgrader/files/:source_file_url/folders/:destinate_folder_url
-- POST      /api/forge/da4revit/v1/upgrader/files
-- GET       /api/forge/da4revit/v1/upgrader/files/:file_workitem_id
-- DELETE    /api/forge/da4revit/v1/upgrader/files/:file_workitem_id
-- POST      /api/forge/callback/designautomation
-
-### File/Folder operation API based on Data Management API at **routes/datamanagement.js**
-- POST      /api/forge/datamanagement/v1/folder
-- DELETE    /api/forge//datamanagement/v1/folder/:folder_url
-- GET       /api/forge/datamanagement/v1
-
-### User information API at **routes/user.js**
-- GET       /api/forge/user/v1/profile
-
-### OAuth information API at **routes/oauth.js**
-- GET       /api/forge/oauth/v1/url
-- GET       /api/forge/q/v1/signout
-- GET       /api/forge/oauth/v1/token
-- GET       /api/forge/oauth/v1/clientid
-- GET       /api/forge/callback/oauth
 
 ## Packages used
 
@@ -142,10 +116,6 @@ After installing Github desktop for Windows, on the Git Shell, if you see a ***e
     git config --global http.sslverify "false"
 
 ## Limitation
-- For Demo purpose, we only support **5** files to be upgraded as maximum
-- Only support upgrading to Revit 2019
-- Override is not implemented yet
-- Only support upgrade file from/to BIM360
 - Client JavaScript requires modern browser
 
 ## License
