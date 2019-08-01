@@ -145,7 +145,7 @@ async function startWorkitem() {
         }
         else {
             if (_fileInputForm == null || _fileInputForm.files.length === 0){
-                alert('Please upload input Excel first');
+                alert('Please select input Excel first');
                 return;
             }
             updateStatus('started');
@@ -324,7 +324,7 @@ function updateStatus(status, extraInfo = '') {
             statusText.innerHTML = 
                 exporting ? 
                     "<h4>Step 3/3: Done, Ready to <a href='" + extraInfo + "'>DOWNLOAD</a></h4>" 
-                   :"<h4>Step 4/4: Done, Read in BIM360</h4>";
+                   :"<h4>Step 4/4: Done, Check in BIM360</h4>";
             // Enable Create and Cancel button
             upgradeBtnElm.disabled = false;
             cancelBtnElm.disabled = true;
