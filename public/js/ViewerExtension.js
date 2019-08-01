@@ -30,11 +30,7 @@ CustomPropertyPanel.prototype.constructor = CustomPropertyPanel;
 
 CustomPropertyPanel.prototype.setProperties = function (properties, options) {
     Autodesk.Viewing.Extensions.ViewerPropertyPanel.prototype.setProperties.call(this, properties, options);
-
-    // add your custom properties here
-    // for example, let's show the dbId and externalId
     var that = this;
-
     this.removeAllProperties();
     this.viewer.getProperties(this.nodeId, function (props) {
         props.properties.forEach((prop) => {
@@ -42,9 +38,9 @@ CustomPropertyPanel.prototype.setProperties = function (properties, options) {
                 || prop.displayName === "Comments")
                 that.addProperty(prop.displayName, prop.displayValue, prop.displayCategory);
         })
+        that.resizeToContent();
+        that.respositionPanel();    
     })
-    this.resizeToContent();
-    this.respositionPanel();
 }
 
 CustomPropertyPanel.prototype.setNodeProperties = function (nodeId) {
@@ -79,7 +75,6 @@ CustomPropertyPanelExtension.prototype.load = function () {
     // Selection change event
     this.onSelectionBinded = this.onSelectionChanged.bind(this);
     this.viewer.addEventListener(Autodesk.Viewing.SELECTION_CHANGED_EVENT, this.onSelectionBinded)
-
     return true;
 };
 
@@ -148,8 +143,7 @@ CustomPropertyPanelExtension.prototype.onToolbarCreated = function (e) {
 
 
 CustomPropertyPanelExtension.prototype.onSelectionChanged = function (e) {
-    // this.panel.resizeToContent();
-    // this.panel.respositionPanel();
+    // Nothing need to do here for now
   }
 
 Autodesk.Viewing.theExtensionManager.registerExtension('CustomPropertyPanelExtension', CustomPropertyPanelExtension);

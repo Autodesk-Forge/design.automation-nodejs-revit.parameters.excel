@@ -1,10 +1,11 @@
-# design.automation-nodejs-revit.parameters.export.import
+# design.automation-nodejs-revit.parameters.excel
 
 [![Node.js](https://img.shields.io/badge/Node.js-8.0-blue.svg)](https://nodejs.org/)
 [![npm](https://img.shields.io/badge/npm-4.0-blue.svg)](https://www.npmjs.com/)
 ![Platforms](https://img.shields.io/badge/Web-Windows%20%7C%20MacOS%20%7C%20Linux-lightgray.svg)
 [![Data-Management](https://img.shields.io/badge/Data%20Management-v1-green.svg)](http://developer.autodesk.com/)
 [![Design-Automation](https://img.shields.io/badge/Design%20Automation-v3-green.svg)](http://developer.autodesk.com/)
+[![Forge-Viewer](https://img.shields.io/badge/Forge%20Viewer-v7-green.svg)](http://developer.autodesk.com/)
 
 
 ![Windows](https://img.shields.io/badge/Plugins-Windows-lightgrey.svg)
@@ -17,7 +18,7 @@
 
 # Description
 
-This sample demostrated how to export & import Revit parameters to Excel.
+This sample demostrated how to export Revit parameters to Excel, and also import Revit parameters from Excel.
 
 # Thumbnail
 ![thumbnail](/thumbnail.png)
@@ -26,8 +27,8 @@ This sample demostrated how to export & import Revit parameters to Excel.
 [https://revitexcel.herokuapp.com/](https://revitexcel.herokuapp.com/)
 
 # Main Parts of The Work
-1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./FileUpgrader/PlugIn/) 
-2. Create your App, upload the AppBundle, define your Activity and test the workitem with the Postman collection under [Postman Collection](./FileUpgrader/PostmanCollection/) 
+1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./fireRatingPlugin/PlugIn/) 
+2. Create your App, upload the AppBundle, define your Activity and test the workitem with the Postman collection under [Postman Collection](./fireRatingPlugin/PostmanCollection/) 
 3. Create the Web App to call the workitem.
 
 # Web App Setup
@@ -50,7 +51,7 @@ Install [NodeJS](https://nodejs.org), version 8 or newer.
 
 Clone this project or download it (this `nodejs` branch only). It's recommended to install [GitHub desktop](https://desktop.github.com/). To clone it via command line, use the following (**Terminal** on MacOSX/Linux, **Git Shell** on Windows):
 
-    git clone https://github.com/Autodesk-Forge/design.automation-nodejs-revit.file.upgrader
+    git clone https://github.com/JohnOnSoftware/design.automation-nodejs-revit.parameters.excel
 
 Install the required packages using `npm install`.
 
@@ -86,10 +87,10 @@ Windows (use **Node.js command line** from Start menu)
 
 ### Using the app
 
-Open the browser: [http://localhost:3000](http://localhost:3000), there are 2 ways to upgrade files: 
+Open the browser: [http://localhost:3000](http://localhost:3000), it provides the abilities to export & import parameter with Excel: 
 
-Select Revit file version in BIM360 Hub to view the Model, Select parameters which you want to export|import, choose either export or import and click 'Execute'.
-
+1. Select Revit file version in BIM360 Hub to view the Model, Select parameters which you want to export|import, choose either export or import and click 'Execute'.
+2. Select the Door type or instance in Model Viewer, and open the customized property panel to see the result.
 
 
 ## Packages used
