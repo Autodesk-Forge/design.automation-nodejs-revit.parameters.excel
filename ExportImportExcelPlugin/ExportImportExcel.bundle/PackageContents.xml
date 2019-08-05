@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ApplicationPackage>
+  <Components Description="Export and Import parameters">
+    <RuntimeRequirements OS="Win64"
+                         Platform="Revit"
+                         SeriesMin="R2019"
+                         SeriesMax="R2019" />
+    <ComponentEntry AppName="ExportImportExcelApp"
+                    Version="1.0.0"
+                    ModuleName="./Contents/ExportImportExcel.addin"
+                    AppDescription="Export and Import parameters"
+                    LoadOnCommandInvocation="False"
+                    LoadOnRevitStartup="True" />
+  </Components>
+</ApplicationPackage>
