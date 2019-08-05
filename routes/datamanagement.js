@@ -19,7 +19,7 @@ const fs = require('fs');
 const { FoldersApi, ObjectsApi, BucketsApi, PostBucketsSigned } = require('forge-apis');
 const { OAuth } = require('./common/oauthImp');
 const multer  = require('multer');
-const { designAutomation }= require('../config');
+const { credentials }= require('../config');
 
 const { 
     createFolderBody, 
@@ -171,7 +171,7 @@ router.post('/datamanagement/v1/oss/object', multer({ dest: 'uploads/' }).single
         const oauth_client = oauth.get2LeggedClient();;
         const oauth_token = await oauth_client.authenticate();
 
-        const bucketKey = designAutomation.revit_IO_Nick_Name.toLowerCase() + '_designautomation';
+        const bucketKey = credentials.client_id.toLowerCase() + '_designautomation';
         const opt = {
             bucketKey: bucketKey,
             policyKey: 'transient',
