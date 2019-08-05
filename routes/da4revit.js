@@ -17,7 +17,7 @@
 /////////////////////////////////////////////////////////////////////
 
 const express = require('express');
-const { designAutomation }= require('../config');
+const { credentials }= require('../config');
 
 const {
     ItemsApi,
@@ -80,7 +80,7 @@ router.get('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) =
     const oauth_token = await oauth_client.authenticate();
 
     // create the temp output storage
-    const bucketKey = designAutomation.revit_IO_Nick_Name.toLowerCase() + '_designautomation';
+    const bucketKey = credentials.client_id.toLowerCase() + '_designautomation';
     const opt = {
         bucketKey: bucketKey,
         policyKey: 'transient',
