@@ -21,7 +21,7 @@ This sample demonstrates how to update a file-based Revit model stored in BIM 36
 1. export Revit parameters (Door Type Parameter “Fire Rating”, and/or Door Instance Parameter “Comments”) to an excel file.
 2. Import Revit parameters (same as above) from a locally stored excel file.
  
-The custom button in a viewer is provided to make it easier to see the parameters value. You can also see the value in the default property panel as well.
+The custom button in a viewer is provided to make it easier to see the parameter values. You can also see the values in the default property panel as well.
  
 
 # Thumbnail
@@ -124,7 +124,7 @@ After installing Github desktop for Windows, on the Git Shell, if you see a ***e
 
 ## Limitation
 - Before using the sample to call the workitem, you need to setup your Appbundle & Activity of Design Automation, you can use my Postman script to do that easily, I am also working on the way to automatically create Appbundle & Activity, will come soon.
-- Currently Revit Cloud Worksharing is not supported by the Design Automation.  The scenario this sample demonstrates applicable only with file-based Revit model. 
+- Currently Revit Cloud Worksharing is not supported by the Design Automation.  The scenario that this sample demonstrates is applicable only with a file-based Revit model. 
 - The free version of [LibXL](http://www.libxl.com) I used will write a banner in the first row of each spreadsheet and it will be able to read only 300 cells (first row is unavailable). If you want to remove banner and reading restriction, you may contact them for a license.
 - Client JavaScript requires modern browser.
 
