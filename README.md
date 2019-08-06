@@ -17,8 +17,12 @@
 [![MIT](https://img.shields.io/badge/License-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 
 # Description
-
-This sample demostrated how to export Revit parameters to Excel, and also import Revit parameters from Excel.
+This sample demonstrates how to update a file-based Revit model stored in BIM 360 Docs, using Design Automation for Revit. The sample does two things:
+1. export Revit parameters (Door Type Parameter “Fire Rating”, and/or Door Instance Parameter “Comments”) to an excel file.
+2. Import Revit parameters (same as above) from a locally stored excel file.
+ 
+The custom button in a viewer is provided to make it easier to see the parameters value. You can also see the value in the default property panel as well.
+ 
 
 # Thumbnail
 ![thumbnail](/thumbnail.png)
@@ -27,8 +31,8 @@ This sample demostrated how to export Revit parameters to Excel, and also import
 [https://revitexcel.herokuapp.com/](https://revitexcel.herokuapp.com/)
 
 # Main Parts of The Work
-1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./fireRatingPlugin/PlugIn/) 
-2. Create your App, upload the AppBundle, define your Activity and test the workitem with the Postman collection under [Postman Collection](./fireRatingPlugin/PostmanCollection/) 
+1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./ExportImportExcelPlugin/) 
+2. Create your App, upload the AppBundle, define your Activity and test the workitem with the Postman collection under [Postman Collection](./PostmanCollection/) 
 3. Create the Web App to call the workitem.
 
 # Web App Setup
@@ -97,6 +101,8 @@ Open the browser: [http://localhost:3000](http://localhost:3000), it provides th
 
 The [Autodesk Forge](https://www.npmjs.com/package/forge-apis) packages is included by default. Some other non-Autodesk packaged are used, including [socket.io](https://www.npmjs.com/package/socket.io), [express](https://www.npmjs.com/package/express).
 
+Within the Revit Plugin, [LibXL](http://www.libxl.com) is used to read/write the date of Excel. 
+
 ## Further Reading
 
 Documentation:
@@ -117,7 +123,9 @@ After installing Github desktop for Windows, on the Git Shell, if you see a ***e
     git config --global http.sslverify "false"
 
 ## Limitation
-- Client JavaScript requires modern browser
+- Currently Revit Cloud Worksharing is not supported by the Design Automation.  The scenario this sample demonstrates applicable only with file-based Revit model. 
+- Client JavaScript requires modern browser.
+- The free version of [LibXL](http://www.libxl.com) I used will write a banner in the first row of each spreadsheet and it will be able to read only 300 cells (first row is unavailable). If you want to remove banner and reading restriction, you may contact them for a license.
 
 ## License
 
