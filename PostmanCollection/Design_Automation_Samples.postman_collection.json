@@ -1,0 +1,598 @@
+{
+	"info": {
+		"_postman_id": "5fea929b-d5a8-4293-95cf-7925114471ca",
+		"name": "Design Automation Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "RevitIO.ExportImportExcel",
+			"item": [
+				{
+					"name": "00-New token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cb820137-d158-4775-a325-0975a8ab1881",
+								"exec": [
+									"var body = JSON.parse(responseBody);",
+									"pm.environment.set(\"dasApiToken\", body[\"access_token\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{client_secret}}",
+									"type": "text"
+								},
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "code:all bucket:read bucket:update bucket:create bucket:delete data:write data:create data:read",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/authentication/v1/authenticate",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"authentication",
+								"v1",
+								"authenticate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "01-Create app bundle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4021abd2-aa98-4862-85eb-ee741698d6c4",
+								"exec": [
+									"var body = JSON.parse(responseBody);",
+									"pm.environment.set(\"appBundleUrl\", body[\"uploadParameters\"][\"endpointURL\"]);",
+									"pm.environment.set(\"appBundleVersion\", body[\"version\"]);",
+									"pm.environment.set(\"appBundleFormDataKey\", body[\"uploadParameters\"][\"formData\"][\"key\"]);",
+									"pm.environment.set(\"appBundleFormDataPolicy\", body[\"uploadParameters\"][\"formData\"][\"policy\"]);",
+									"pm.environment.set(\"appBundleFormDataSignature\", body[\"uploadParameters\"][\"formData\"][\"x-amz-signature\"]);",
+									"pm.environment.set(\"appBundleFormDataCredential\", body[\"uploadParameters\"][\"formData\"][\"x-amz-credential\"]);",
+									"pm.environment.set(\"appBundleFormDataDate\", body[\"uploadParameters\"][\"formData\"][\"x-amz-date\"]);",
+									"pm.environment.set(\"appBundleFormDataToken\", body[\"uploadParameters\"][\"formData\"][\"x-amz-security-token\"]);",
+									"pm.environment.set(\"appBundleFormRedirect\", body[\"uploadParameters\"][\"formData\"][\"success_action_redirect\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"id\": \"{{appBundleName}}\",\r\n\t\"engine\": \"Autodesk.Revit+2019\",\r\n\t\"description\": \"Create window family\"\r\n}"
+						},
+						"url": {
+							"raw": "{{dasApiRoot}}/appbundles",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"appbundles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "02-Upload app bundle to Design Automation",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "f15df6e5-8f98-4ea7-8e21-9b68875f57aa",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "6029064c-c08c-43db-a281-b30edd1689fa",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "key",
+									"value": "{{appBundleFormDataKey}}",
+									"type": "text"
+								},
+								{
+									"key": "content-type",
+									"value": "application/octet-stream",
+									"type": "text"
+								},
+								{
+									"key": "policy",
+									"value": "{{appBundleFormDataPolicy}}",
+									"type": "text"
+								},
+								{
+									"key": "success_action_status",
+									"value": "200",
+									"type": "text"
+								},
+								{
+									"key": "x-amz-signature",
+									"value": "{{appBundleFormDataSignature}}",
+									"type": "text"
+								},
+								{
+									"key": "x-amz-credential",
+									"value": "{{appBundleFormDataCredential}}",
+									"type": "text"
+								},
+								{
+									"key": "x-amz-algorithm",
+									"value": "AWS4-HMAC-SHA256",
+									"type": "text"
+								},
+								{
+									"key": "x-amz-date",
+									"value": "{{appBundleFormDataDate}}",
+									"type": "text"
+								},
+								{
+									"key": "x-amz-server-side-encryption",
+									"value": "AES256",
+									"type": "text"
+								},
+								{
+									"key": "x-amz-security-token",
+									"value": "{{appBundleFormDataToken}}",
+									"type": "text"
+								},
+								{
+									"key": "success_action_redirect",
+									"value": "{{appBundleFormRedirect}}",
+									"type": "text"
+								},
+								{
+									"key": "file",
+									"type": "file"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{appBundleUrl}}",
+							"host": [
+								"{{appBundleUrl}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "03-Create a new app bundle alias",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"version\": {{appBundleVersion}},\r\n  \"id\": \"{{appBundleAlias}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{dasApiRoot}}/appbundles/{{appBundleName}}/aliases",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"appbundles",
+								"{{appBundleName}}",
+								"aliases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "04-Create activity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a1eda547-e6c7-4073-a773-0fc897166bfa",
+								"exec": [
+									"var body = JSON.parse(responseBody);",
+									"pm.environment.set(\"activityVersion\", body[\"version\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "\r\n\r\n\r\n\r\n{\r\n\t\"id\": \"{{activityName}}\",\r\n\t\"commandLine\": [ \"$(engine.path)\\\\\\\\revitcoreconsole.exe /i $(args[inputFile].path) /al $(appbundles[{{appBundleName}}].path)\" ],\r\n    \"parameters\": {\r\n        \"inputFile\": {\r\n            \"verb\": \"get\",\r\n            \"description\": \"input file\",\r\n            \"required\": true,\r\n            \"localName\": \"$(inputFile)\"\r\n        },\r\n        \"inputJson\": {\r\n            \"verb\": \"get\",\r\n            \"description\": \"input Json parameters\",\r\n            \"localName\": \"params.json\"\r\n        },\r\n        \"inputXls\": {\r\n            \"verb\": \"get\",\r\n            \"description\": \"input excel file\",\r\n            \"localName\": \"input.xls\"\r\n        },\r\n        \"outputRvt\": {\r\n            \"verb\": \"put\",\r\n            \"description\": \"output Rvt file\",\r\n            \"localName\": \"result.rvt\"\r\n        },\r\n        \"outputXls\": {\r\n            \"verb\": \"put\",\r\n            \"description\": \"output excel file\",\r\n            \"localName\": \"result.xls\"\r\n        }\r\n    },\r\n\t\"engine\": \"Autodesk.Revit+2019\",\r\n\t\"appbundles\": [ \"{{dasNickName}}.{{appBundleName}}+{{appBundleAlias}}\" ],\r\n\t\"description\": \"Export & Import Parameter values to Excel Activity.\"\r\n}"
+						},
+						"url": {
+							"raw": "{{dasApiRoot}}/activities",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"activities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "05-Create activity alias",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"{{activityAlias}}\",\r\n    \"version\": {{activityVersion}}\r\n}"
+						},
+						"url": {
+							"raw": "{{dasApiRoot}}/activities/{{activityName}}/aliases",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"activities",
+								"{{activityName}}",
+								"aliases"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "06-Send Workitem",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bba6b291-c09f-4f45-b6a3-f7b727b6b38c",
+								"exec": [
+									"var body = JSON.parse(responseBody);",
+									"pm.environment.set(\"workitemId\", body[\"id\"]);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"activityId\": \"{{dasNickName}}.{{activityName}}+{{activityAlias}}\",\r\n  \"arguments\": {\r\n        \"inputFile\":{\r\n            \"url\":\"https://developer.api.autodesk.com/oss/v2/signedresources/ed016c6d-6f56-4d13-8e7b-47152887a519?region=US\"\r\n        },\r\n        \"inputJson\":{\r\n            \"url\":\"data:application/json,{ 'Export': 'false', 'IncludeFireRating':'true', 'IncludeComments':'true'}\"\r\n            },        \r\n        \"inputXls\":{\r\n        \t\"url\":\"https://developer.api.autodesk.com/oss/v2/signedresources/e0cc9414-ddae-4693-abb9-65ec0c4aef1f?region=US\"\t\r\n        },\r\n\t\t\"outputRvt\":{\r\n            \"verb\":\"put\",\r\n            \"url\":\"https://developer.api.autodesk.com/oss/v2/signedresources/f67f179d-1eb8-4d6e-ac68-475fc9b019f4?region=US\",\r\n            \"optional\": true\r\n        },\r\n        \"outputXls\":{\r\n            \"verb\":\"put\",\r\n            \"url\":\"https://developer.api.autodesk.com/oss/v2/signedresources/09ed7ddd-4548-4ce6-b7e1-b662ca608e65?region=US\",\r\n            \"optional\": true\r\n        }\r\n  }\r\n}\r\n"
+						},
+						"url": {
+							"raw": "{{dasApiRoot}}/workitems",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"workitems"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "07-Get Workitem status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{dasApiRoot}}/workitems/{{workitemId}}",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"workitems",
+								"{{workitemId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create nickname",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5b993251-5b30-4bab-bc41-2f15cc54d56e",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"nickname\": \"{{dasNickName}}\"\r\n}"
+						},
+						"url": {
+							"raw": "{{dasApiRoot}}/forgeapps/me",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"forgeapps",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get list of appbundles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{dasApiRoot}}/appbundles/{{appBundleName}}+{{appBundleAlias}}",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"appbundles",
+								"{{appBundleName}}+{{appBundleAlias}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get list of activities",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							}
+						],
+						"url": {
+							"raw": "{{dasApiRoot}}/activities/{{activityName}}+{{activityAlias}}",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"activities",
+								"{{activityName}}+{{activityAlias}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete app bundle",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cc2915c1-911a-4458-a425-8641e8fca96e",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{dasApiRoot}}/appbundles/{{appBundleName}}",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"appbundles",
+								"{{appBundleName}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete activity",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0bf87f3f-0d23-46b1-82cf-79c821285114",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{dasApiToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{dasApiRoot}}/activities/{{activityName}}",
+							"host": [
+								"{{dasApiRoot}}"
+							],
+							"path": [
+								"activities",
+								"{{activityName}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

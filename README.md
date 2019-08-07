@@ -27,6 +27,9 @@ The custom button in a viewer is provided to make it easier to see the parameter
 # Thumbnail
 ![thumbnail](/thumbnail.png)
 
+# Demonstration
+Whatch the recording at [Youtube](https://www.youtube.com/watch?v=KXHR_SfK-Ho&feature=youtu.be).
+
 # Live Demo
 [https://revitexcel.herokuapp.com/](https://revitexcel.herokuapp.com/)
 
@@ -126,6 +129,7 @@ After installing Github desktop for Windows, on the Git Shell, if you see a ***e
 - Before using the sample to call the workitem, you need to setup your Appbundle & Activity of Design Automation, you can use my Postman script to do that easily, I am also working on the way to automatically create Appbundle & Activity, will come soon.
 - Currently Revit Cloud Worksharing is not supported by the Design Automation.  The scenario that this sample demonstrates is applicable only with a file-based Revit model. 
 - The free version of [LibXL](http://www.libxl.com) I used will write a banner in the first row of each spreadsheet and it will be able to read only 300 cells (first row is unavailable). If you want to remove banner and reading restriction, you may contact them for a license.
+- It takes time for BIM360 to automatically translate the new uploaded Revit file version, please wait for a while to see the viewable and properties.
 - Client JavaScript requires modern browser.
 
 ## License
