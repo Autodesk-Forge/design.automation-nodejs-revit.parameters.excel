@@ -129,8 +129,7 @@ router.post('/designautomation/appbundles', async( req, res, next) => {
             const createAppVersionUrl =  designAutomation.URL.CREATE_APPBUNDLE_VERSION_URL.format(appBundleName);
             newAppVersion = await apiClientCallAsync( 'POST', createAppVersionUrl, req.oauth_token.access_token, appBundleSpec );
             const aliasSpec = {
-                "Version" : newAppVersion.body.version,
-                "Receiver": 'd92tPAURJuYXJMbZ4zCQop8okwHAitJq'
+                "Version" : newAppVersion.body.version
             }
             const modifyAppAliasUrl = designAutomation.URL.UPDATE_APPBUNDLE_ALIAS_URL.format(appBundleName,designAutomation.revit_IO_Alias);
             await apiClientCallAsync( 'PATCH', modifyAppAliasUrl, req.oauth_token.access_token, aliasSpec );
@@ -150,8 +149,7 @@ router.post('/designautomation/appbundles', async( req, res, next) => {
             newAppVersion = await apiClientCallAsync( 'POST', designAutomation.URL.APPBUNDLES_URL, req.oauth_token.access_token, appBundleSpec );
             const aliasSpec = {
                 "Id" : designAutomation.revit_IO_Alias,
-                "Version" : 1,
-                "Receiver": 'd92tPAURJuYXJMbZ4zCQop8okwHAitJq'
+                "Version" : 1
             }
             const createAppBundleAliasUrl = designAutomation.URL.CREATE_APPBUNDLE_ALIAS_URL.format(appBundleName);
             await apiClientCallAsync( 'POST', createAppBundleAliasUrl, req.oauth_token.access_token, aliasSpec );
@@ -241,8 +239,7 @@ router.post('/designautomation/activities', async( req, res, next) => {
             newActivity = await apiClientCallAsync( 'POST',  designAutomation.URL.ACTIVITIES_URL, req.oauth_token.access_token, activitySpec );
             const aliasSpec = {
                 "Id" : designAutomation.revit_IO_Alias,
-                "Version" : 1,
-                "Receiver": 'd92tPAURJuYXJMbZ4zCQop8okwHAitJq'
+                "Version" : 1
             }
             const createActivityAliasUrl = designAutomation.URL.CREATE_ACTIVITY_ALIAS.format(activityName);
             await apiClientCallAsync( 'POST',  createActivityAliasUrl, req.oauth_token.access_token, aliasSpec );

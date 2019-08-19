@@ -29,7 +29,7 @@
         },
         "REVIT_IO_ACTIVITY_NAME": {
             "description": "Revit Design Automation Activity Name",
-            "value": ""
+            "value": "ExportImportExcelActivity+dev"
 
         }
     },
