@@ -99,6 +99,15 @@ Open the browser: [http://localhost:3000](http://localhost:3000), it provides th
 1. Select Revit file version in BIM360 Hub to view the Model, Select parameters which you want to export|import, choose either export or import and click 'Execute'.
 2. Select the Door type or instance in Model Viewer, and open the customized property panel to see the result.
 
+- `Note`: If you want to deploy the app by yourself, you can open the `Configure` button to create the AppBundle & Activity, then make sure you use the AppBundle & Activity as the environment variables.   
+
+## Deployment
+
+To deploy this application to Heroku, the **Callback URL** for Forge must use your `.herokuapp.com` address. After clicking on the button below, at the Heroku Create New App page, set your Client ID, Secret, Callback URL and Revit Design Automation variables for Forge.
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/JohnOnSoftware/design.automation-nodejs-revit.parameters.excel)
+
+Watch [this video](https://www.youtube.com/watch?v=Oqa9O20Gj0c) on how deploy samples to Heroku.
 
 ## Packages used
 
