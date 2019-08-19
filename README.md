@@ -99,7 +99,7 @@ Open the browser: [http://localhost:3000](http://localhost:3000), it provides th
 1. Select Revit file version in BIM360 Hub to view the Model, Select parameters which you want to export|import, choose either export or import and click 'Execute'.
 2. Select the Door type or instance in Model Viewer, and open the customized property panel to see the result.
 
-- `Note`: If you want to deploy the app by yourself, you can open the `Configure` button to create the AppBundle & Activity, then make sure you use the AppBundle & Activity as the environment variables.   
+`Note`: When you deploy the app, you have to open the `Configure` button to create the AppBundle & Activity before running the Export|Import feature, please check the video for the steps at [https://youtu.be/1NCeH7acIko](https://youtu.be/1NCeH7acIko)
 
 ## Deployment
 
