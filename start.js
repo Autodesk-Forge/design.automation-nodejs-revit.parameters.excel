@@ -27,6 +27,18 @@ if (config.credentials.client_id == null || config.credentials.client_secret == 
     return;
 }
 
+if (!String.prototype.format) {
+    String.prototype.format = function () {
+        var args = arguments;
+        return this.replace(/{(\d+)}/g, function (match, number) {
+            return typeof args[number] != 'undefined'
+                ? args[number]
+                : match
+                ;
+        });
+    };
+}
+
 var app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieSession({
@@ -39,6 +51,8 @@ app.use('/api/forge', require('./routes/oauth'));
 app.use('/api/forge', require('./routes/datamanagement'));
 app.use('/api/forge', require('./routes/user'));
 app.use('/api/forge', require('./routes/da4revit'));
+app.use('/api/forge', require('./routes/daconfigure'));
+
 app.use((err, req, res, next) => {
     console.error(err);
     res.status(err.statusCode).json(err);

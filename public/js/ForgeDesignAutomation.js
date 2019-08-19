@@ -301,26 +301,26 @@ function updateStatus(status, extraInfo = '') {
     let cancelBtnElm = document.getElementById('cancelBtn');
     switch (status) {
         case "started":
-            setProgress(20);
+            setProgress(20, 'parametersUpdateProgressBar');
             statusText.innerHTML = "<h4>Step " + (exporting ? "1/3":"1/4") +  ":  Uploading input parameters</h4>"
             // Disable Create and Cancel button
             upgradeBtnElm.disabled = true;
             cancelBtnElm.disabled = true;
             break;
         case "pending":
-            setProgress(40);
+            setProgress(40, 'parametersUpdateProgressBar');
             statusText.innerHTML = "<h4>Step " + (exporting ? "2/3":"2/4") +  ": Running Design Automation</h4>"
             upgradeBtnElm.disabled = true;
             cancelBtnElm.disabled = false;
             break;
         case "success":
-            setProgress(80);
+            setProgress(80, 'parametersUpdateProgressBar');
             statusText.innerHTML = "<h4>Step 3/4: Creating a new version</h4>"
             upgradeBtnElm.disabled = true;
             cancelBtnElm.disabled = true;
             break;
         case "completed":
-            setProgress(100);
+            setProgress(100, 'parametersUpdateProgressBar');
             statusText.innerHTML = 
                 exporting ? 
                     "<h4>Step 3/3: Done, Ready to <a href='" + extraInfo + "'>DOWNLOAD</a></h4>" 
@@ -330,14 +330,14 @@ function updateStatus(status, extraInfo = '') {
             cancelBtnElm.disabled = true;
             break;
         case "failed":
-            setProgress(0);
+            setProgress(0, 'parametersUpdateProgressBar');
             statusText.innerHTML = "<h4>Failed to process Excel</h4>"
             // Enable Create and Cancel button
             upgradeBtnElm.disabled = false;
             cancelBtnElm.disabled = true;
             break;
         case "cancelled":
-            setProgress(0);
+            setProgress(0, 'parametersUpdateProgressBar');
             statusText.innerHTML = "<h4>The operation is cancelled</h4>"
             // Enable Create and Cancel button
             upgradeBtnElm.disabled = false;
@@ -347,13 +347,12 @@ function updateStatus(status, extraInfo = '') {
 }
 
 
-function setProgress(percent) {
-    let progressBar = document.getElementById('parametersUpdateProgressBar');
+function setProgress(percent, progressbarId ) {
+    let progressBar = document.getElementById(progressbarId);
     progressBar.style = "width: " + percent + "%;";
     if (percent === 100) {
         progressBar.parentElement.className = "progress progress-striped"
     } else {
         progressBar.parentElement.className = "progress progress-striped active"
-
     }
 }

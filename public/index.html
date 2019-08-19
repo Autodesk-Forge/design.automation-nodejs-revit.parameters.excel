@@ -21,6 +21,7 @@
   <link href="css/main.css" rel="stylesheet" />
 
   <script src="/js/ForgeDesignAutomation.js"></script>
+  <script src="/js/DAConfigure.js"></script>
   <script src="/js/ForgeTree.js"></script>
   <script src="/js/ForgeViewer.js"></script>
   <script src="/js/ViewerExtension.js"></script>
@@ -30,7 +31,7 @@
   <!-- Fixed navbar by Bootstrap: https://getbootstrap.com/examples/navbar-fixed-top/ -->
   <nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
-      <ul class="nav navbar-nav left col-lg-7">
+      <ul class="nav navbar-nav left col-lg-6">
         <li>
           <a href="http://developer.autodesk.com" target="_blank">
             <img alt="Autodesk Forge" src="//developer.static.autodesk.com/images/logo_forge-2-line.png" height="20">
@@ -39,7 +40,7 @@
       </ul>
 
 
-      <ul class="nav navbar-nav right col-lg-3">
+      <ul class="nav navbar-nav right col-lg-2">
         <li>
             <div style="float: right; margin-top: 15px;">
                 <span style="padding-right: 5px;" data-toggle="modal" data-target="#provisionAccountModal" title="Enable my BIM 360 Account"><span
@@ -47,6 +48,19 @@
               </div>
         </li>
       </ul>
+
+
+      <ul class="nav navbar-nav right col-lg-2">
+        <li>
+              <div style="float: right; margin-top: 15px; cursor: pointer;">
+                <span style="padding-right: 5px;" data-toggle="modal" data-target="#defineActivityModal" title="Configura AppBundle & Activity">
+                    <span class="glyphicon glyphicon-cog glyphiconTop mlink"></span> Configure
+                </span>
+            </div>
+
+        </li>
+      </ul>
+
 
 
       <ul class="nav navbar-nav right col-lg-2">
@@ -195,6 +209,60 @@
       </div>
     </div>
   </div>
+
+      <!-- Modal Define AppBundle & Activity -->
+      <div class="modal fade" id="defineActivityModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cancel"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">AppBundle & Activity</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning"><center>Define AppBundle &amp; Activity only once.<br />Redefine only when your plugin code change (creates a new version).</center></div>
+                    <div class="form-group">
+                        <label for="localBundles">Select a local AppBundle:</label>
+                        <select class="form-control" id="localBundles"> </select>
+                        <b>Tip:</b> Make sure .ZIP bundles are placed at <b>/bundles/</b> folder
+                    </div>
+                    <div class="form-group">
+                        <label for="engines">Select engine:</label>
+                        <select class="form-control" id="engines"> </select>
+                    </div>
+                    For this sample the .ZIP name is used as suffix to define <b>AppBundle</b> and <b>Activity</b>
+                    names. Activities will have the following parameters: <br> 
+                    &nbsp&nbsp&nbsp&nbsp<b>inputFile:</b> Revit input file,  required for both Export and Import <br> 
+                    &nbsp&nbsp&nbsp&nbsp<b>inputJson:</b>  Parmeters, identify it's for Export or Import  <br>
+                    &nbsp&nbsp&nbsp&nbsp<b>inputXls:</b>  Input Excel file,  required while importing <br>
+                    &nbsp&nbsp&nbsp&nbsp<b>outputRvt:</b> Output Revit file, required while importing  <br>
+                    &nbsp&nbsp&nbsp&nbsp<b>outputXls:</b> Output Excel file, required while exporting  <br>
+                    
+                    <div style="text-align: left;">
+                        <label id="configText">
+                          <h4>Status</h4>
+                        </label>
+                      </div>
+                      <div>
+                          <div class="progress progress-striped active">
+                              <div id='configProgressBar' width=90% class="progress-bar progress-bar-success" role="progressbar"
+                                   aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                                   style="width: 0%;">
+                                  <span class="sr-only">40% 完成</span>
+                              </div>
+                          </div>
+                    </div>                
+
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="createAppBundleActivity">Create/Update</button>
+                    <button class="btn btn-danger" id="clearAccount">Delete</button>
+                </div>
+
+  
+            </div>
+        </div>
+    </div>
 
     <!-- Modal Provision BIM360  -->
     <div class="modal fade" id="provisionAccountModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

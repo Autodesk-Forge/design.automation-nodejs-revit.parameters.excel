@@ -125,8 +125,8 @@
     <PostBuildEvent>xcopy /Y /F "$(ProjectDir)ExportImportExcel.addin" "$(AppData)\Autodesk\REVIT\Addins\2019"
 xcopy /Y /F "$(ProjectDir)bin\Debug\ExportImportExcel.dll" "$(AppData)\Autodesk\REVIT\Addins\2019”
 xcopy /Y /F "$(TargetDir)*.dll" "$(ProjectDir)ExportImportExcel.bundle\Contents\"
-del /F "$(ProjectDir)..\WebApp\wwwroot\bundles\ExportImportExcel.zip"
-"C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../WebApp/wwwroot/bundles/ExportImportExcel.zip" "$(ProjectDir)ExportImportExcel.bundle\" -xr0!*.pdb</PostBuildEvent>
+del /F "$(ProjectDir)..\public\bundles\ExportImportExcel.zip"
+"C:\Program Files\7-Zip\7z.exe" a -tzip "$(ProjectDir)../public/bundles/ExportImportExcel.zip" "$(ProjectDir)ExportImportExcel.bundle\" -xr0!*.pdb</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

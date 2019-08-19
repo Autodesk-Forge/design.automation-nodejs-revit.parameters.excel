@@ -40,7 +40,20 @@ module.exports = {
         revit_IO_Nick_Name:     process.env.REVIT_IO_NICK_NAME,
         revit_IO_App_Name:      process.env.REVIT_IO_APP_NAME,
         revit_IO_Activity_Name: process.env.REVIT_IO_ACTIVITY_NAME,
+        revit_IO_Alias: 'dev',
+
+        URL:{
+            GET_ENGINES_URL:    "https://developer.api.autodesk.com/da/us-east/v3/engines",
+            ACTIVITIES_URL:     "https://developer.api.autodesk.com/da/us-east/v3/activities",
+            ACTIVITY_URL:       "https://developer.api.autodesk.com/da/us-east/v3/activities/{0}",
+            APPBUNDLES_URL:     "https://developer.api.autodesk.com/da/us-east/v3/appbundles",
+            APPBUNDLE_URL:      "https://developer.api.autodesk.com/da/us-east/v3/appbundles/{0}",
+
+            CREATE_APPBUNDLE_VERSION_URL: "https://developer.api.autodesk.com/da/us-east/v3/appbundles/{0}/versions",
+            CREATE_APPBUNDLE_ALIAS_URL:   "https://developer.api.autodesk.com/da/us-east/v3/appbundles/{0}/aliases",
+
+            UPDATE_APPBUNDLE_ALIAS_URL:  "https://developer.api.autodesk.com/da/us-east/v3/appbundles/{0}/aliases/{1}",
+            CREATE_ACTIVITY_ALIAS: "https://developer.api.autodesk.com/da/us-east/v3/activities/{0}/aliases",
+        }
     }
-
-
 };
