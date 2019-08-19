@@ -21,13 +21,16 @@
         },
         "FORGE_WEBHOOK_URL": {
             "description": "Callback URL of your webhook",
-            "value": "http://<<YOUR HEROKU APP NAME HERE>>.herokuapp.com"
+            "value": "http://<<YOUR HEROKU APP NAME HERE>>.herokuapp.com/api/forge/callback/designautomation"
         },
         "REVIT_IO_NICK_NAME": {
-            "description": "Revit Design Automation NickName"
+            "description": "Revit Design Automation NickName, FORGE_CLIENT_ID by default",
+            "value": "<<YOUR FORGE_CLIENT_ID HERE>>"
         },
         "REVIT_IO_ACTIVITY_NAME": {
-            "description": "Revit Design Automation Activity Name"
+            "description": "Revit Design Automation Activity Name",
+            "value": ""
+
         }
     },
     "website": "https://developer.autodesk.com/",
