@@ -53,7 +53,7 @@ function getWorkitemStatus(workItemId, access_token) {
 
         var options = {
             method: 'GET',
-            url: designAutomation.revit_IO_Endpoint +'workitems/'+ workItemId,
+            url: designAutomation.endpoint +'workitems/'+ workItemId,
             headers: {
                 Authorization: 'Bearer ' + access_token,
                 'Content-Type': 'application/json'
@@ -98,7 +98,7 @@ function cancelWorkitem(workItemId, access_token) {
 
         var options = {
             method: 'DELETE',
-            url: designAutomation.revit_IO_Endpoint +'workitems/'+ workItemId,
+            url: designAutomation.endpoint +'workitems/'+ workItemId,
             headers: {
                 Authorization: 'Bearer ' + access_token,
                 'Content-Type': 'application/json'
@@ -139,7 +139,7 @@ function importExcel(inputRvtUrl, inputExcUrl, inputJson, outputRvtUrl, projectI
 
         const workitemBody = {
 
-            activityId: designAutomation.revit_IO_Nick_Name + '.' + designAutomation.revit_IO_Activity_Name,
+            activityId: designAutomation.nickname + '.' + designAutomation.activity_name,
             arguments: {
                 inputFile: {
                     url: inputRvtUrl,
@@ -163,14 +163,14 @@ function importExcel(inputRvtUrl, inputExcUrl, inputJson, outputRvtUrl, projectI
                 },
                 onComplete: {
                     verb: "post",
-                    url: designAutomation.revit_IO_WebHook_Url
+                    url: designAutomation.webhook_url
                 }
             }
         };
 
         var options = {
             method: 'POST',
-            url: designAutomation.revit_IO_Endpoint+'workitems',
+            url: designAutomation.endpoint+'workitems',
             headers: {
                 Authorization: 'Bearer ' + access_token_2Legged.access_token,
                 'Content-Type': 'application/json'
@@ -221,7 +221,7 @@ function exportExcel(inputRvtUrl, inputJson, outputExlUrl, access_token_3Legged,
 
         const workitemBody = {
 
-                activityId: designAutomation.revit_IO_Nick_Name + '.'+designAutomation.revit_IO_Activity_Name,
+                activityId: designAutomation.nickname + '.'+designAutomation.activity_name,
                 arguments: {
                     inputFile: {
                         url: inputRvtUrl,
@@ -239,13 +239,13 @@ function exportExcel(inputRvtUrl, inputJson, outputExlUrl, access_token_3Legged,
                     },
                     onComplete: {
                         verb: "post",
-                        url: designAutomation.revit_IO_WebHook_Url
+                        url: designAutomation.webhook_url
                     }
                 }
         };    
         var options = {
             method: 'POST',
-            url: designAutomation.revit_IO_Endpoint+'workitems',
+            url: designAutomation.endpoint+'workitems',
             headers: {
                 Authorization: 'Bearer ' + access_token_2Legged.access_token,
                 'Content-Type': 'application/json'

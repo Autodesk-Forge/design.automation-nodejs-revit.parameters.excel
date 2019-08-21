@@ -77,8 +77,8 @@ Mac OSX/Linux (Terminal)
     export FORGE_CLIENT_SECRET=<<YOUR CLIENT SECRET>>
     export FORGE_CALLBACK_URL=<<YOUR CALLBACK URL>>
     export FORGE_WEBHOOK_URL=<<YOUR DESIGN AUTOMATION FOR REVIT CALLBACK URL>>
-    export REVIT_IO_NICK_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT NICK NAME>>
-    export REVIT_IO_ACTIVITY_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY NAME>>
+    export DESIGN_AUTOMATION_NICKNAME=<<YOUR DESIGN AUTOMATION FOR REVIT NICK NAME>>
+    export DESIGN_AUTOMATION_ACTIVITY_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY NAME>>
     npm start
 
 Windows (use **Node.js command line** from Start menu)
@@ -88,8 +88,8 @@ Windows (use **Node.js command line** from Start menu)
     set FORGE_CLIENT_SECRET=<<YOUR CLIENT SECRET>>
     set FORGE_CALLBACK_URL=<<YOUR CALLBACK URL>>
     set FORGE_WEBHOOK_URL=<<YOUR DESIGN AUTOMATION FOR REVIT CALLBACK URL>>
-    set REVIT_IO_NICK_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT NICK NAME>>
-    set REVIT_IO_ACTIVITY_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY NAME>>
+    set DESIGN_AUTOMATION_NICKNAME=<<YOUR DESIGN AUTOMATION FOR REVIT NICK NAME>>
+    set DESIGN_AUTOMATION_ACTIVITY_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY NAME>>
     npm start
 
 ### Using the app
@@ -135,7 +135,7 @@ After installing Github desktop for Windows, on the Git Shell, if you see a ***e
     git config --global http.sslverify "false"
 
 ## Limitation
-- Before using the sample to call the workitem, you need to setup your Appbundle & Activity of Design Automation, you can use my Postman script to do that easily, I am also working on the way to automatically create Appbundle & Activity, will come soon.
+- Before using the sample to call the workitem, you need to setup your Appbundle & Activity of Design Automation, you can follow my Postman script to understand the whole process, or you can simply use the `Configure` button in the Web Application to create the Appbundle & Activity([https://youtu.be/1NCeH7acIko](https://youtu.be/1NCeH7acIko)). 
 - Currently Revit Cloud Worksharing is not supported by the Design Automation.  The scenario that this sample demonstrates is applicable only with a file-based Revit model. 
 - The free version of [LibXL](http://www.libxl.com) I used will write a banner in the first row of each spreadsheet and it will be able to read only 300 cells (first row is unavailable). If you want to remove banner and reading restriction, you may contact them for a license.
 - It takes time for BIM360 to automatically translate the new uploaded Revit file version, please wait for a while to see the viewable and properties.

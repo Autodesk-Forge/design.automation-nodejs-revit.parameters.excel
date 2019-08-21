@@ -118,7 +118,7 @@ router.post('/designautomation/appbundles', async( req, res, next) => {
         return;
     }
 
-    const qualifiedAppBundleId = designAutomation.revit_IO_Nick_Name + '.' + appBundleName + '+' + designAutomation.revit_IO_Alias;
+    const qualifiedAppBundleId = designAutomation.nickname + '.' + appBundleName + '+' + designAutomation.appbundle_activity_alias;
     var newAppVersion = null;
     if( appBundles.includes( qualifiedAppBundleId ) ){
         try{
@@ -131,7 +131,7 @@ router.post('/designautomation/appbundles', async( req, res, next) => {
             const aliasSpec = {
                 "Version" : newAppVersion.body.version
             }
-            const modifyAppAliasUrl = designAutomation.URL.UPDATE_APPBUNDLE_ALIAS_URL.format(appBundleName,designAutomation.revit_IO_Alias);
+            const modifyAppAliasUrl = designAutomation.URL.UPDATE_APPBUNDLE_ALIAS_URL.format(appBundleName,designAutomation.appbundle_activity_alias);
             await apiClientCallAsync( 'PATCH', modifyAppAliasUrl, req.oauth_token.access_token, aliasSpec );
         }
         catch( err ){
@@ -148,7 +148,7 @@ router.post('/designautomation/appbundles', async( req, res, next) => {
             }
             newAppVersion = await apiClientCallAsync( 'POST', designAutomation.URL.APPBUNDLES_URL, req.oauth_token.access_token, appBundleSpec );
             const aliasSpec = {
-                "Id" : designAutomation.revit_IO_Alias,
+                "Id" : designAutomation.appbundle_activity_alias,
                 "Version" : 1
             }
             const createAppBundleAliasUrl = designAutomation.URL.CREATE_APPBUNDLE_ALIAS_URL.format(appBundleName);
@@ -188,7 +188,6 @@ router.post('/designautomation/activities', async( req, res, next) => {
 
     let activities = null;
     try {
-        // const getDAActivitiesUrl = designAutomation.revit_IO_Endpoint +'activities';
         const activityRes = await apiClientCallAsync( 'GET',  designAutomation.URL.ACTIVITIES_URL, req.oauth_token.access_token);
         if(activityRes.body && activityRes.body.data ){
             activities = activityRes.body.data;
@@ -198,8 +197,8 @@ router.post('/designautomation/activities', async( req, res, next) => {
         res.status(400).end("Failed to get activities.");
         return;
     }
-    const qualifiedAppBundleId = designAutomation.revit_IO_Nick_Name + '.' + appBundleName + '+' + designAutomation.revit_IO_Alias;
-    const qualifiedActivityId  = designAutomation.revit_IO_Nick_Name + '.' + activityName + '+' + designAutomation.revit_IO_Alias;
+    const qualifiedAppBundleId = designAutomation.nickname + '.' + appBundleName + '+' + designAutomation.appbundle_activity_alias;
+    const qualifiedActivityId  = designAutomation.nickname + '.' + activityName + '+' + designAutomation.appbundle_activity_alias;
     if( !activities.includes( qualifiedActivityId ) ){
         const activitySpec = {
             Id : activityName,
@@ -238,7 +237,7 @@ router.post('/designautomation/activities', async( req, res, next) => {
         try{
             newActivity = await apiClientCallAsync( 'POST',  designAutomation.URL.ACTIVITIES_URL, req.oauth_token.access_token, activitySpec );
             const aliasSpec = {
-                "Id" : designAutomation.revit_IO_Alias,
+                "Id" : designAutomation.appbundle_activity_alias,
                 "Version" : 1
             }
             const createActivityAliasUrl = designAutomation.URL.CREATE_ACTIVITY_ALIAS.format(activityName);

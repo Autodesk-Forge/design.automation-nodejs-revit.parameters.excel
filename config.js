@@ -35,12 +35,11 @@ module.exports = {
         public: ['viewables:read']
     },
     designAutomation:{
-        revit_IO_WebHook_Url: process.env.FORGE_WEBHOOK_URL,
-        revit_IO_Endpoint: 'https://developer.api.autodesk.com/da/us-east/v3/',
-        revit_IO_Nick_Name:     process.env.REVIT_IO_NICK_NAME,
-        revit_IO_App_Name:      process.env.REVIT_IO_APP_NAME,
-        revit_IO_Activity_Name: process.env.REVIT_IO_ACTIVITY_NAME,
-        revit_IO_Alias: 'dev',
+        webhook_url: process.env.FORGE_WEBHOOK_URL,
+        endpoint: 'https://developer.api.autodesk.com/da/us-east/v3/',
+        nickname:     process.env.DESIGN_AUTOMATION_NICKNAME,
+        activity_name: process.env.DESIGN_AUTOMATION_ACTIVITY_NAME,
+        appbundle_activity_alias: 'dev',
 
         URL:{
             GET_ENGINES_URL:    "https://developer.api.autodesk.com/da/us-east/v3/engines",
