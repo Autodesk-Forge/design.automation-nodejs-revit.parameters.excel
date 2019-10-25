@@ -31,11 +31,13 @@ The custom button in a viewer is provided to make it easier to see the parameter
 [![https://youtu.be/nOAEzimdq5Q](http://img.youtube.com/vi/nOAEzimdq5Q/0.jpg)](http://www.youtube.com/watch?v=nOAEzimdq5Q "Export|Import Revit parameter values to|from Excel")
 
 # Live Demo
-[https://revitexcel.herokuapp.com/](https://revitexcel.herokuapp.com/)
+[https://revitexcel2020.herokuapp.com/](https://revitexcel2020.herokuapp.com/)
 
 # Main Parts of The Work
 1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./ExportImportExcelPlugin/) 
-2. Create your App, upload the AppBundle, define your Activity and test the workitem with the Postman collection under [Postman Collection](./PostmanCollection/) 
+
+2. Create your App, upload the AppBundle, define your Activity and test the workitem with the Postman collection under [Postman Collection](./PostmanCollection/), or you can refer ([https://youtu.be/1NCeH7acIko](https://youtu.be/1NCeH7acIko)) and simply use the `Configure` button in the Web Application to create the Appbundle & Activity. 
+
 3. Create the Web App to call the workitem.
 
 # Web App Setup
@@ -99,7 +101,7 @@ Open the browser: [http://localhost:3000](http://localhost:3000), it provides th
 1. Select Revit file version in BIM360 Hub to view the Model, Select parameters which you want to export|import, choose either export or import and click 'Execute'.
 2. Select the Door type or instance in Model Viewer, and open the customized property panel to see the result.
 
-`Note`: When you deploy the app, you have to open the `Configure` button to create the AppBundle & Activity before running the Export|Import feature, please check the video for the steps at [https://youtu.be/1NCeH7acIko](https://youtu.be/1NCeH7acIko)
+`Note`: When you deploy the app, you have to open the `Configure` button to create the AppBundle & Activity before running the Export|Import feature, please check the video for the steps at [https://youtu.be/1NCeH7acIko](https://youtu.be/1NCeH7acIko). You can also delete the existing AppBundle & Activity and re-create with different Design Automation Revit engine version.
 
 ## Deployment
 
@@ -140,6 +142,7 @@ After installing Github desktop for Windows, on the Git Shell, if you see a ***e
 - The free version of [LibXL](http://www.libxl.com) I used will write a banner in the first row of each spreadsheet and it will be able to read only 300 cells (first row is unavailable). If you want to remove banner and reading restriction, you may contact them for a license.
 - It takes time for BIM360 to automatically translate the new uploaded Revit file version, please wait for a while to see the viewable and properties.
 - Client JavaScript requires modern browser.
+- Currently, the sample support Design Automation engine 2019 & 2020, you can use `Configure` button to delete|create different versions of Design Automation Revit engine.
 
 ## License
 
