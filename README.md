@@ -70,7 +70,7 @@ Run `ngrok http 3000` to create a tunnel to your local machine, then copy the ad
 
 ### Environment variables
 
-Set the enviroment variables with your client ID & secret and finally start it. Via command line, navigate to the folder where this repository was cloned and use the following:
+Set the environment variables with your client ID & secret and finally start it. Via command line, navigate to the folder where this repository was cloned and use the following:
 
 Mac OSX/Linux (Terminal)
 
@@ -93,6 +93,24 @@ Windows (use **Node.js command line** from Start menu)
     set DESIGN_AUTOMATION_NICKNAME=<<YOUR DESIGN AUTOMATION FOR REVIT NICK NAME>>
     set DESIGN_AUTOMATION_ACTIVITY_NAME=<<YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY NAME>>
     npm start
+
+Windows (use **PowerShell**)
+
+    npm install
+    $env:FORGE_CLIENT_ID="YOUR CLIENT ID FROM DEVELOPER PORTAL"
+    $env:FORGE_CLIENT_SECRET="YOUR CLIENT SECRET"
+    $env:FORGE_CALLBACK_URL="YOUR CALLBACK URL"
+    $env:FORGE_WEBHOOK_URL="YOUR DESIGN AUTOMATION FOR REVIT CALLBACK URL"
+    $env:DESIGN_AUTOMATION_NICKNAME="YOUR DESIGN AUTOMATION FOR REVIT NICK NAME"
+    $env:DESIGN_AUTOMATION_ACTIVITY_NAME="YOUR DESIGN AUTOMATION FOR REVIT ACTIVITY NAME"
+    npm start
+
+**Note.**
+environment variable examples:
+- FORGE_CALLBACK_URL: `http://localhost:3000/api/forge/callback/oauth`
+- FORGE_WEBHOOK_URL: `http://808efcdc123456.ngrok.io/api/forge/callback/designautomation`
+- DESIGN_AUTOMATION_NICKNAME: You can pass your client id here
+- DESIGN_AUTOMATION_ACTIVITY_NAME: `ExportImportExcelActivity`
 
 ### Using the app
 
@@ -151,3 +169,4 @@ This sample is licensed under the terms of the [MIT License](http://opensource.o
 ## Written by
 
 Zhong Wu [@johnonsoftware](https://twitter.com/johnonsoftware), [Forge Partner Development](http://forge.autodesk.com)
+Eason Kang [@yiskang](https://twitter.com/yiskang), [Forge Partner Development](http://forge.autodesk.com)
