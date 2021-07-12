@@ -113,8 +113,8 @@ router.get('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) =
         let workitemStatus = {
             'Status': "Failed"
         };
-        global.socketio.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
-        res.status(500).end(err);
+        global.MyApp.SocketIo.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
+        res.status(500).end(JSON.stringify(err));
     }
 });
 
@@ -213,8 +213,8 @@ router.post('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) 
         let workitemStatus = {
             'Status': "Failed"
         };
-        global.socketio.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
-        res.status(500).end(err);
+        global.MyApp.SocketIo.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
+        res.status(500).end(JSON.stringify(err));
     }
 });
 

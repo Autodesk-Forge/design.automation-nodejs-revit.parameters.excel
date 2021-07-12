@@ -139,7 +139,7 @@ function importExcel(inputRvtUrl, inputExcUrl, inputJson, outputRvtUrl, projectI
 
         const workitemBody = {
 
-            activityId: designAutomation.nickname + '.' + designAutomation.activity_name,
+            activityId: designAutomation.nickname + '.' + designAutomation.activity_name + '+'+ designAutomation.appbundle_activity_alias,
             arguments: {
                 inputFile: {
                     url: inputRvtUrl,
@@ -220,8 +220,7 @@ function exportExcel(inputRvtUrl, inputJson, outputExlUrl, access_token_3Legged,
     return new Promise(function (resolve, reject) {
 
         const workitemBody = {
-
-                activityId: designAutomation.nickname + '.'+designAutomation.activity_name,
+                activityId: designAutomation.nickname + '.'+designAutomation.activity_name + '+'+ designAutomation.appbundle_activity_alias,
                 arguments: {
                     inputFile: {
                         url: inputRvtUrl,
