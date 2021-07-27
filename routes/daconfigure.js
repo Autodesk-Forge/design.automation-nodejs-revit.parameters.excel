@@ -49,10 +49,23 @@ router.use(async (req, res, next) => {
 ///////////////////////////////////////////////////////////////////////
 router.get('/designautomation/engines', async(req, res, next) => {
     try {
-        let workitemRes = await apiClientCallAsync( 'GET',  designAutomation.URL.GET_ENGINES_URL, req.oauth_token.access_token);
-        const engineList = workitemRes.body.data.filter( (engine ) => {
+        let Allengines = [];
+        let paginationToken = null;
+
+        while (true) {
+            let url = paginationToken ? `${designAutomation.URL.GET_ENGINES_URL}?page=${paginationToken}`: designAutomation.URL.GET_ENGINES_URL;
+            let enginesResult = await apiClientCallAsync( 'GET', url, req.oauth_token.access_token);
+            let engines = enginesResult.body;
+            Allengines = Allengines.concat(engines.data);
+
+            if (engines.paginationToken == null) break;
+
+            paginationToken = engines.paginationToken;
+        }
+
+        const engineList = Allengines.filter( (engine ) => {
             return (engine.indexOf('Revit') >= 0)
-        })
+        }).sort();
         res.status(200).end(JSON.stringify(engineList));
     } catch (err) {
         res.status(500).end("error");
