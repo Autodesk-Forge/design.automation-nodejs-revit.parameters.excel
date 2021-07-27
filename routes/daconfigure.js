@@ -203,7 +203,7 @@ router.post('/designautomation/activities', async( req, res, next) => {
         const activitySpec = {
             Id : activityName,
             Appbundles : [ qualifiedAppBundleId ],
-            CommandLine : [ "$(engine.path)\\\\revitcoreconsole.exe /i $(args[inputFile].path) /al $(appbundles[" + appBundleName + "].path)" ],
+            CommandLine : [ "$(engine.path)\\\\revitcoreconsole.exe /i \"$(args[inputFile].path)\" /al \"$(appbundles[" + appBundleName + "].path)\"" ],
             Engine : engineName,
             Parameters :
             {
