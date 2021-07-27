@@ -28,6 +28,21 @@ function CustomPropertyPanel(viewer, options) {
 CustomPropertyPanel.prototype = Object.create(Autodesk.Viewing.Extensions.ViewerPropertyPanel.prototype);
 CustomPropertyPanel.prototype.constructor = CustomPropertyPanel;
 
+
+CustomPropertyPanel.prototype.requestProperties = function () {
+
+    if (this.isVisible() && this.isDirty) {
+
+      if (this.currentModel != null && this.currentNodeIds.length > 0) {
+        this.requestNodeProperties(this.currentNodeIds[0]);
+      } else {
+        this.showDefaultProperties();
+      }
+      this.isDirty = false;
+    }
+  }
+
+  
 CustomPropertyPanel.prototype.setProperties = function (properties, options) {
     Autodesk.Viewing.Extensions.ViewerPropertyPanel.prototype.setProperties.call(this, properties, options);
     var that = this;
@@ -42,6 +57,13 @@ CustomPropertyPanel.prototype.setProperties = function (properties, options) {
         that.respositionPanel();    
     })
 }
+
+
+CustomPropertyPanel.prototype.requestNodeProperties = function(nodeId) {
+    Autodesk.Viewing.Extensions.ViewerPropertyPanel.prototype.setNodeProperties.call(this, nodeId);
+    this.nodeId = nodeId; // store the dbId for later use
+  }
+
 
 CustomPropertyPanel.prototype.setNodeProperties = function (nodeId) {
     Autodesk.Viewing.Extensions.ViewerPropertyPanel.prototype.setNodeProperties.call(this, nodeId);
