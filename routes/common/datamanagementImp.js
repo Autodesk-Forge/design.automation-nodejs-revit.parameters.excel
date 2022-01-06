@@ -175,46 +175,20 @@ async function getVersions(projectId, itemId, oauthClient, credentials, res) {
     const items = new ItemsApi();
     const versions = await items.getItemVersions(projectId, itemId, {}, oauthClient, credentials);
 
-    const version_promises = versions.body.data.map(async (version) => {
+    const versions_json = versions.body.data.map( (version) => {
         const dateFormated = new Date(version.attributes.lastModifiedTime).toLocaleString();
         const versionst = version.id.match(/^(.*)\?version=(\d+)$/)[2];
-        if (version.attributes.extension.data && version.attributes.extension.data.viewableGuid) {
-
-            //this might be the documents in BIM 360 Plan folder. It is view (derivative)already.
-            const viewableGuid = version.attributes.extension.data.viewableGuid
-            //NOTE: version.id is the urn of view version, instead of the [seed file version urn]
-            //tricky to find [seed file version urn]
-            //var viewerUrn = Buffer.from(params[0]).toString('base64') + '_' + Buffer.from(params[1]).toString('base64')
-
-            const seedVersionUrn = await getVersionRef(projectId, version.id, oauthClient, credentials)
-            const viewerUrn = seedVersionUrn ? Buffer.from(seedVersionUrn).toString('base64').replace('/', '_').trim('=').split('=').join('') : null
-
-            const seedVersionStorage = await getVersionRefStorage(projectId, version.id, oauthClient, credentials);
-            // let's return for the jsTree with a special id:
-            // itemUrn|versionUrn|viewableId
-            // itemUrn: used as target_urn to get document issues
-            // versionUrn: used to launch the Viewer
-            // viewableId: which viewable should be loaded on the Viewer
-            // this information will be extracted when the user click on the tree node
-            return createTreeNode(
-                itemId + '|' + viewerUrn + '|' + viewableGuid,
-                decodeURI('v' + versionst + ': ' + dateFormated + ' by ' + version.attributes.lastModifiedUserName),
-                (viewerUrn != null ? 'versions' : 'unsupported'),
-                false,
-                seedVersionStorage
-            );
-        } else {
-            const viewerUrn = (version.relationships != null && version.relationships.derivatives != null ? version.relationships.derivatives.data.id : null);
-            return createTreeNode(
-                viewerUrn,
-                decodeURI('v' + versionst + ': ' + dateFormated + ' by ' + version.attributes.lastModifiedUserName),
-                viewerUrn ? 'versions' : 'unsupported',
-                false
-            );
-        }
+        const viewerUrn = (version.relationships != null && version.relationships.derivatives != null ? version.relationships.derivatives.data.id : null);
+        const versionStorage = (version.relationships != null && version.relationships.storage != null &&  version.relationships.storage.meta != null && version.relationships.storage.meta.link != null? version.relationships.storage.meta.link.href : null);
+        return createTreeNode(
+            viewerUrn,
+            decodeURI('v' + versionst + ': ' + dateFormated + ' by ' + version.attributes.lastModifiedUserName),
+            (viewerUrn != null ? 'versions' : 'unsupported'),
+            false,
+            versionStorage
+        );
     })
-    const versions_json = await Promise.all(version_promises);
-    res.json(versions_json);
+    res.json(versions_json.filter(node=>node!=null));
 }
 
 async function getVersionRefStorage(projectId, viewUrnId, oauthClient, credentials) {
