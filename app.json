@@ -23,13 +23,13 @@
             "description": "Callback URL of your webhook",
             "value": "http://<<YOUR HEROKU APP NAME HERE>>.herokuapp.com/api/forge/callback/designautomation"
         },
-        "REVIT_IO_NICK_NAME": {
+        "DESIGN_AUTOMATION_NICKNAME": {
             "description": "Revit Design Automation NickName, FORGE_CLIENT_ID by default",
             "value": "<<YOUR FORGE_CLIENT_ID HERE>>"
         },
-        "REVIT_IO_ACTIVITY_NAME": {
+        "DESIGN_AUTOMATION_ACTIVITY_NAME": {
             "description": "Revit Design Automation Activity Name",
-            "value": "ExportImportExcelActivity+dev"
+            "value": "ExportImportExcelActivity"
 
         }
     },

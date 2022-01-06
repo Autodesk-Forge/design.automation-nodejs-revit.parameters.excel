@@ -174,19 +174,72 @@ async function getFolderContents(projectId, folderId, oauthClient, credentials, 
 async function getVersions(projectId, itemId, oauthClient, credentials, res) {
     const items = new ItemsApi();
     const versions = await items.getItemVersions(projectId, itemId, {}, oauthClient, credentials);
-    res.json(versions.body.data.map((version) => {
+
+    const versions_json = versions.body.data.map( (version) => {
         const dateFormated = new Date(version.attributes.lastModifiedTime).toLocaleString();
         const versionst = version.id.match(/^(.*)\?version=(\d+)$/)[2];
-        const viewerUrn = (version.relationships !== null && version.relationships.derivatives !== null ? version.relationships.derivatives.data.id : null);
-        const versionStorage = (version.relationships !== null && version.relationships.storage !== null &&  version.relationships.storage.meta != null && version.relationships.storage.meta.link != null? version.relationships.storage.meta.link.href : null);
+        const viewerUrn = (version.relationships != null && version.relationships.derivatives != null ? version.relationships.derivatives.data.id : null);
+        const versionStorage = (version.relationships != null && version.relationships.storage != null &&  version.relationships.storage.meta != null && version.relationships.storage.meta.link != null? version.relationships.storage.meta.link.href : null);
         return createTreeNode(
             viewerUrn,
             decodeURI('v' + versionst + ': ' + dateFormated + ' by ' + version.attributes.lastModifiedUserName),
-            (viewerUrn !== null ? 'versions' : 'unsupported'),
+            (viewerUrn != null ? 'versions' : 'unsupported'),
             false,
             versionStorage
         );
-    }));
+    })
+    res.json(versions_json.filter(node=>node!=null));
+}
+
+async function getVersionRefStorage(projectId, viewUrnId, oauthClient, credentials) {
+    const versionApi = new VersionsApi()
+    const relationshipRefs = await versionApi.getVersionRelationshipsRefs(projectId, viewUrnId, {}, oauthClient, credentials)
+
+    if (relationshipRefs.body && relationshipRefs.body.included && relationshipRefs.body.included.length > 0) {
+        //find file of the reference
+        const ref = relationshipRefs.body.included.find(d => d &&
+            d.type == 'versions' &&
+            d.attributes.extension.type == 'versions:autodesk.bim360:File')
+
+        if (ref) {
+            return ref.relationships.storage.data.id;
+        } else {
+            return null;
+        }
+    }
+
+    return null;
+}
+
+// get references of this version urn,e.g. views of seed file
+async function getVersionRef(projectId, viewUrnId, oauthClient, credentials) {
+    // Documents in BIM 360 Folder will go to this branch
+    const versionApi = new VersionsApi()
+    const relationshipRefs = await versionApi.getVersionRelationshipsRefs(projectId, viewUrnId, {}, oauthClient, credentials)
+
+    if (relationshipRefs.body && relationshipRefs.body.data && relationshipRefs.body.data.length > 0) {
+        //find meta of the reference
+        const ref = relationshipRefs.body.data.find(d => d.meta &&
+            d.meta.fromType == 'versions' &&
+            d.meta.toType == 'versions')
+        if (ref) {
+            if (ref.meta.extension.type == 'derived:autodesk.bim360:CopyDocument') {
+                //this is a copy document, ref.id is the view urn, instead of version urn
+                //recurse until find the source version urn
+                const sourceViewId = ref.id
+                return await getVersionRef(projectId, sourceViewId, oauthClient, credentials)
+            } else if (ref.meta.extension.type == 'derived:autodesk.bim360:FileToDocument') {
+                //this is the original documents, when source model version is extracted in BIM 360 Plan folder
+                return ref.id
+            } else {
+                return null
+            }
+        } else {
+            return null
+        }
+    } else {
+        return null
+    }
 }
 
 // Format data for tree
