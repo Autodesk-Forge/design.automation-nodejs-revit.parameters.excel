@@ -34,6 +34,23 @@ const {
 const express = require('express');
 let router = express.Router();
 
+
+
+///////////////////////////////////////////////////////////////////////
+/// Middleware for obtaining a token for each request.
+///////////////////////////////////////////////////////////////////////
+router.use(async (req, res, next) => {
+    const oauth = new OAuth(req.session);
+    const credentials = await oauth.getInternalToken();
+    if( credentials ){
+        req.oauth_client = oauth.getClient()
+        req.oauth_token = credentials;     
+        next();       
+    }
+});
+
+
+
 router.get('/datamanagement/v1', async (req, res) => {
     // The id querystring parameter contains what was selected on the UI tree, make sure it's valid
     const href = decodeURIComponent(req.query.id);
@@ -43,11 +60,9 @@ router.get('/datamanagement/v1', async (req, res) => {
     }
 
     // Get the access token
-    const oauth = new OAuth(req.session);
-    const internalToken = await oauth.getInternalToken();
     if (href === '#') {
         // If href is '#', it's the root tree node
-        getHubs(oauth.getClient(), internalToken, res);
+        getHubs(req.oauth_client, req.oauth_token, res);
     } else {
         // Otherwise let's break it by '/'
         const params = href.split('/');
@@ -55,23 +70,23 @@ router.get('/datamanagement/v1', async (req, res) => {
         const resourceId = params[params.length - 1];
         switch (resourceName) {
             case 'hubs':
-                getProjects(resourceId, oauth.getClient(), internalToken, res);
+                getProjects(resourceId, req.oauth_client, req.oauth_token, res);
                 break;
             case 'projects':
                 // For a project, first we need the top/root folder
                 const hubId = params[params.length - 3];
-                getFolders(hubId, resourceId/*project_id*/, oauth.getClient(), internalToken, res);
+                getFolders(hubId, resourceId/*project_id*/, req.oauth_client, req.oauth_token, res);
                 break;
             case 'folders':
                 {
                     const projectId = params[params.length - 3];
-                    getFolderContents(projectId, resourceId/*folder_id*/, oauth.getClient(), internalToken, res);
+                    getFolderContents(projectId, resourceId/*folder_id*/, req.oauth_client, req.oauth_token, res);
                     break;
                 }
             case 'items':
                 {
                     const projectId = params[params.length - 3];
-                    getVersions(projectId, resourceId/*item_id*/, oauth.getClient(), internalToken, res);
+                    getVersions(projectId, resourceId/*item_id*/, req.oauth_client, req.oauth_token, res);
                     break;
                 }
         }
@@ -95,9 +110,7 @@ router.delete('/datamanagement/v1/folder/:folder_url', async (req, res )=>{
     const folderId  = params[params.length-1];
 
     try {
-        const oauth = new OAuth(req.session);
-        const internalToken = await oauth.getInternalToken();
-        await deleteFolder(projectId, folderId, internalToken.access_token);
+        await deleteFolder(projectId, folderId, req.oauth_token.access_token);
         res.status(204).end();
     } catch (err) {
         res.status(500).end("error");
@@ -134,13 +147,9 @@ router.post('/datamanagement/v1/folder', async (req, res) => {
     const folderId  = params[params.length - 1];
 
     try {
-        // Get the access token
-        const oauth = new OAuth(req.session);
-        const internalToken = await oauth.getInternalToken();
-
         const folders = new FoldersApi();
         const folderBody = createFolderBody(folderName, folderId);
-        const newFolder = await folders.postFolder(projectId, folderBody, oauth.getClient(), internalToken);
+        const newFolder = await folders.postFolder(projectId, folderBody, req.oauth_client, req.oauth_token);
         console.log(newFolder);
         if (newFolder === null || newFolder.statusCode !== 201) {
             console.log('failed to create a folder.');

@@ -61,12 +61,13 @@ router.get('/oauth/v1/token', async (req, res, next) => {
         res.status(401).end();
         return;
     }
-
     try {
-        const accessToken = await oauth.getPublicToken();
-        res.json(accessToken);
+        const publicCredentials = await oauth.getPublicToken();
+        publicCredentials? res.json(publicCredentials):res.status(401).end();
+        return;
     } catch(err) {
-        next(err);
+        res.status(401).end();
+        return;
     }
 });
 

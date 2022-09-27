@@ -54,9 +54,11 @@ router.use(async (req, res, next) => {
     let credentials = await oauth.getInternalToken();
     let oauth_client = oauth.getClient();
 
-    req.oauth_client = oauth_client;
-    req.oauth_token = credentials;
-    next();
+    if(credentials ){
+        req.oauth_client = oauth_client;
+        req.oauth_token = credentials;
+        next();
+    }
 });
 
 
