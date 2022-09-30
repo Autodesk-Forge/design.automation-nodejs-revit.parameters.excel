@@ -31,7 +31,7 @@ The custom button in a viewer is provided to make it easier to see the parameter
 [![https://youtu.be/nOAEzimdq5Q](http://img.youtube.com/vi/nOAEzimdq5Q/0.jpg)](http://www.youtube.com/watch?v=nOAEzimdq5Q "Export|Import Revit parameter values to|from Excel")
 
 # Live Demo
-[https://revitexcel2020.herokuapp.com/](https://revitexcel2020.herokuapp.com/)
+[https://revitexcel.herokuapp.com/](https://revitexcel.herokuapp.com/)
 
 # Main Parts of The Work
 1. Create a Revit Plugin to be used within AppBundle of Design Automation for Revit. Please check [PlugIn](./ExportImportExcelPlugin/) 
