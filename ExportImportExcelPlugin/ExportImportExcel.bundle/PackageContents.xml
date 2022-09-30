@@ -3,8 +3,8 @@
   <Components Description="Export and Import parameters">
     <RuntimeRequirements OS="Win64"
                          Platform="Revit"
-                         SeriesMin="R2019"
-                         SeriesMax="R2022" />
+                         SeriesMin="R2020"
+                         SeriesMax="R2023" />
     <ComponentEntry AppName="ExportImportExcelApp"
                     Version="1.0.0"
                     ModuleName="./Contents/ExportImportExcel.addin"

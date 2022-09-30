@@ -191,11 +191,13 @@ router.post('/datamanagement/v1/oss/object', multer({ dest: 'uploads/' }).single
         };
 
         try{
+            // migrate to use new S3 upload API
             const objectApi = new ObjectsApi();
-            // Upload an object to bucket using [ObjectsApi](https://github.com/Autodesk-Forge/forge-api-nodejs-client/blob/master/docs/ObjectsApi.md#uploadObject).
-            const object = await objectApi.uploadObject(bucketKey, req.file.originalname, data.length, data, {}, oauth_client, oauth_token);
-            const signedObj =  await objectApi.createSignedResource(bucketKey, object.body.objectKey, new PostBucketsSigned(minutesExpiration=50), {access:'readwrite'}, oauth_client, oauth_token )
-            res.status(200).end( signedObj.body.signedUrl);
+            let objects = [];
+            objects.push({ objectKey: req.file.originalname, data: data})
+            const resources = await objectApi.uploadResources( bucketKey, objects, {}, oauth_client, oauth_token )
+            const signedObj = await objectApi.getS3DownloadURL(bucketKey, req.file.originalname, null, oauth_client, oauth_token);
+            res.status(200).end( signedObj.body.url);
         } catch (err) {
             next(err);
         }

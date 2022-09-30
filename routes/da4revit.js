@@ -75,6 +75,29 @@ router.get('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) =
         return;
     }
 
+    // generate S3 download url for the storage
+    const params = inputRvtUrl.split('?')[0].split('/');
+    let bucketKey = null;
+    let objectKey = null;
+    for( let i = 0; i< params.length; i++ ){
+        if (params[i] == 'buckets')
+            bucketKey = params[++i];
+        if (params[i] == 'objects')
+            objectKey = params[++i];
+    }
+
+    if( bucketKey == null || objectKey == null ){
+        res.status(400).end('failed to get input bueckt key and object key.');
+        return;
+    }
+    const objectApi = new ObjectsApi();
+    const s3Url =  await objectApi.getS3DownloadURL( bucketKey, objectKey, null, req.oauth_client, req.oauth_token )
+    if( !s3Url || !s3Url.body || !s3Url.body.url ){
+        res.status(400).end('failed to get s3 url for the storage.');
+        return;
+    }
+
+
     ////////////////////////////////////////////////////////////////////////////////
     // use 2 legged token for design automation
     const oauth = new OAuth(req.session);
@@ -82,9 +105,9 @@ router.get('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) =
     const oauth_token = await oauth_client.authenticate();
 
     // create the temp output storage
-    const bucketKey = credentials.client_id.toLowerCase() + '_designautomation';
+    // const bucketKey = credentials.client_id.toLowerCase() + '_designautomation';
     const opt = {
-        bucketKey: bucketKey,
+        bucketKey: credentials.client_id.toLowerCase() + '_designautomation',
         policyKey: 'transient',
     }
     try {
@@ -93,11 +116,15 @@ router.get('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) =
     };
 
     try {
-        const objectApi = new ObjectsApi();
-        const object = await objectApi.uploadObject(bucketKey, Temp_Output_File_Name, 0, '', {}, oauth_client, oauth_token);
-        const signedObj = await objectApi.createSignedResource(bucketKey, object.body.objectKey, new PostBucketsSigned(minutesExpiration = 50), {access:'readwrite'}, oauth_client, oauth_token)
+        // migrate to use new S3 upload API
+        var response = await objectApi.getS3UploadURL(opt.bucketKey, Temp_Output_File_Name, null, oauth_client, oauth_token);
+        const signedS3Info = {
+            BucketKey: opt.bucketKey,
+            ObjectKey: Temp_Output_File_Name,
+            UploadKey: response.body.uploadKey
+        };
 
-        let result = await exportExcel(inputRvtUrl, inputJson, signedObj.body.signedUrl, req.oauth_token, oauth_token);
+        let result = await exportExcel(s3Url.body.url, inputJson, response.body.urls[0], signedS3Info, oauth_token);
         if (result === null || result.statusCode !== 200) {
             console.log('failed to export the excel file');
             res.status(500).end('failed to export the excel file');
@@ -140,6 +167,28 @@ router.post('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) 
         return;
     }
 
+    // generate S3 download url for the storage
+    const urlParams = inputRvtUrl.split('?')[0].split('/');
+    let bucketKey = null;
+    let objectKey = null;
+    for (let i = 0; i < urlParams.length; i++) {
+        if (urlParams[i] == 'buckets')
+            bucketKey = urlParams[++i];
+        if (urlParams[i] == 'objects')
+            objectKey = urlParams[++i];
+    }
+    if (bucketKey == null || objectKey == null) {
+        res.status(400).end('failed to get input bueckt key and object key.');
+        return;
+    }
+    const objectApi = new ObjectsApi();
+    const s3Url = await objectApi.getS3DownloadURL(bucketKey, objectKey, null, req.oauth_client, req.oauth_token)
+    if (!s3Url || !s3Url.body || !s3Url.body.url) {
+        res.status(400).end('failed to get s3 url for the storage.');
+        return;
+    }
+    
+
     const params = fileItemId.split('/');
     if( params.length < 3){
         res.status(400).end('input ItemUrl is not in correct format');
@@ -171,7 +220,7 @@ router.post('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) 
             return;
         }
         const outputUrl = storageInfo.StorageUrl;
-
+        const signedS3Info = storageInfo.SignedS3Info;
 
         // get the storage of the input item version
         const versionInfo = await getLatestVersionInfo(projectId, resourceId, req.oauth_client, req.oauth_token);
@@ -196,7 +245,7 @@ router.post('/da4revit/v1/revit/:version_storage/excel', async (req, res, next) 
         const oauth_token = await oauth_client.authenticate();
 
         // call to import Excel file to update parameters in Revit
-        let result = await importExcel(inputRvtUrl, inputExcUrl, inputJson, outputUrl, projectId, createVersionBody, req.oauth_token, oauth_token);
+        let result = await importExcel(s3Url.body.url, inputExcUrl, inputJson, outputUrl, projectId, createVersionBody, signedS3Info, req.oauth_token, oauth_token);
         if (result === null || result.statusCode !== 200) {
             console.log('failed to import parameters to the revit file');
             res.status(500).end('failed to import parameters to the revit file');
@@ -297,12 +346,16 @@ router.post('/callback/designautomation', async (req, res, next) => {
         }
         let index = workitemList.indexOf(workitem);
 
-        if (workitem.createVersionData !== null) {
+        if (workitem.createVersionData != null) {
             workitemStatus.Status = 'Success';
             global.MyApp.SocketIo.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
-            console.log("Create new version by the workitem:  " + workitem.workitemId);
-
+            console.log("Starting to post handle the DA workitem:  " + workitem.workitemId);
             try {
+                // Call to complete the S3 upload.
+                const objectApi = new ObjectsApi();
+                await objectApi.completeS3Upload(workitem.signedS3Info.BucketKey, workitem.signedS3Info.ObjectKey, { uploadKey: workitem.signedS3Info.UploadKey }, null, req.oauth_client, workitem.access_token_3Legged)
+                console.log("The output Revit Model is completely uploaded.");
+
                 const versions = new VersionsApi();
                 version = await versions.postVersion(workitem.projectId, workitem.createVersionData, req.oauth_client, workitem.access_token_3Legged);
                 if (version === null || version.statusCode !== 201) {
@@ -316,16 +369,24 @@ router.post('/callback/designautomation', async (req, res, next) => {
                 console.log(err);
                 workitemStatus.Status = 'Failed';
             }
-        } else {
-            workitemStatus.Status = 'Completed';
-            workitemStatus.ExtraInfo = workitem.outputUrl;
+        } else if( workitem.signedS3Info ) {
+            // Call to complete the S3 upload the excel file.
+            try{
+                const objectApi = new ObjectsApi();
+                const res = await objectApi.completeS3Upload(workitem.signedS3Info.BucketKey, workitem.signedS3Info.ObjectKey, { uploadKey: workitem.signedS3Info.UploadKey }, null, req.oauth_client, workitem.access_token_2Legged)
+                const downloadInfo = await objectApi.getS3DownloadURL( res.body.bucketKey, res.body.objectKey, null, req.oauth_client, workitem.access_token_2Legged );
+                workitemStatus.Status = 'Completed';
+                workitemStatus.ExtraInfo = downloadInfo.body.url;
+            }catch(err){
+                console.log("Failed to upload the output excel due to "+ err);
+                workitemStatus.Status = 'Failed';
+            }
+        }else{
+            workitemStatus.Status = 'Failed';
         }
         global.MyApp.SocketIo.emit(SOCKET_TOPIC_WORKITEM, workitemStatus);
         // Remove the workitem after it's done
         workitemList.splice(index, 1);
-
-
-
     }else{
         // Report if not successful.
         workitemStatus.Status = 'Failed';

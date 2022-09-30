@@ -20,6 +20,7 @@ const request = require("request");
 const { designAutomation }= require('../../config');
 
 const {
+    ObjectsApi,
     ProjectsApi, 
     ItemsApi,
     StorageRelationshipsTarget,
@@ -134,7 +135,7 @@ function cancelWorkitem(workItemId, access_token) {
 }
 
 
-function importExcel(inputRvtUrl, inputExcUrl, inputJson, outputRvtUrl, projectId, createVersionBody, access_token_3Legged, access_token_2Legged){
+function importExcel(inputRvtS3Url, inputExcS3Url, inputJson, outputRvtS3Url, projectId, createVersionBody, signedS3Info, access_token_3Legged, access_token_2Legged){
     return new Promise(function (resolve, reject) {
 
         const workitemBody = {
@@ -142,24 +143,18 @@ function importExcel(inputRvtUrl, inputExcUrl, inputJson, outputRvtUrl, projectI
             activityId: designAutomation.nickname + '.' + designAutomation.activity_name + '+'+ designAutomation.appbundle_activity_alias,
             arguments: {
                 inputFile: {
-                    url: inputRvtUrl,
-                    Headers: {
-                        Authorization: 'Bearer ' + access_token_3Legged.access_token
-                    },
+                    url: inputRvtS3Url,
                 },
                 inputJson: {
                     url: "data:application/json," + JSON.stringify(inputJson)
                 },
                 inputXls: {
-                    url: inputExcUrl,
+                    url: inputExcS3Url,
                 },
 
                 outputRvt: {
                     verb: 'put',
-                    url: outputRvtUrl,
-                    Headers: {
-                        Authorization: 'Bearer ' + access_token_3Legged.access_token
-                    },
+                    url: outputRvtS3Url,
                 },
                 onComplete: {
                     verb: "post",
@@ -192,6 +187,7 @@ function importExcel(inputRvtUrl, inputExcUrl, inputJson, outputRvtUrl, projectI
                 workitemList.push({
                     workitemId: resp.id,
                     projectId: projectId,
+                    signedS3Info:signedS3Info,
                     createVersionData: createVersionBody,
                     access_token_3Legged: access_token_3Legged
                 })
@@ -215,7 +211,7 @@ function importExcel(inputRvtUrl, inputExcUrl, inputJson, outputRvtUrl, projectI
 }
 
 
-function exportExcel(inputRvtUrl, inputJson, outputExlUrl, access_token_3Legged, access_token_2Legged) {
+function exportExcel(inputRvtS3Url, inputJson,outputExlUrl, signedS3Info, access_token_2Legged) {
 
     return new Promise(function (resolve, reject) {
 
@@ -223,15 +219,11 @@ function exportExcel(inputRvtUrl, inputJson, outputExlUrl, access_token_3Legged,
                 activityId: designAutomation.nickname + '.'+designAutomation.activity_name + '+'+ designAutomation.appbundle_activity_alias,
                 arguments: {
                     inputFile: {
-                        url: inputRvtUrl,
-                        Headers: {
-                            Authorization: 'Bearer ' + access_token_3Legged.access_token
-                        },
+                        url: inputRvtS3Url
                     },
                     inputJson: { 
                         url: "data:application/json,"+ JSON.stringify(inputJson)
                      },
-
                      outputXls: {
                         verb: 'put',
                         url: outputExlUrl
@@ -265,10 +257,8 @@ function exportExcel(inputRvtUrl, inputJson, outputExlUrl, access_token_3Legged,
                 }
                 workitemList.push({
                     workitemId: resp.id,
-                    projectId: null,
-                    createVersionData: null,
-                    access_token_3Legged: null,
-                    outputUrl: outputExlUrl
+                    access_token_2Legged: access_token_2Legged,
+                    signedS3Info: signedS3Info,
                 })
 
                 if (response.statusCode >= 400) {
@@ -351,10 +341,24 @@ async function getNewCreatedStorageInfo(projectId, folderId, fileName, oauth_cli
         console.log('storage id is not correct');
         return null;
     }
-    const storageUrl = "https://developer.api.autodesk.com/oss/v2/buckets/" + AUTODESK_HUB_BUCKET_KEY + "/objects/" + strList[1];
+    // create signed s3 url
+    let response = null;
+    try{
+        const object = new ObjectsApi();
+        response = await object.getS3UploadURL(AUTODESK_HUB_BUCKET_KEY,strList[1], null, oauth_client, oauth_token);
+    }catch( err ){
+        console.log('failed to get signed S3 url.');
+        return null;
+    }
+
     return {
         "StorageId": storage.body.data.id,
-        "StorageUrl": storageUrl
+        "StorageUrl": response.body.urls[0],
+        "SignedS3Info": {
+            BucketKey: AUTODESK_HUB_BUCKET_KEY,
+            ObjectKey: strList[1],
+            UploadKey: response.body.uploadKey
+        }
     };
 }
 

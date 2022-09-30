@@ -9,10 +9,11 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "cookie-session": "^2.0.0-beta.3",
-    "express": "^4.17.1",
-    "forge-apis": "^0.8.5",
-    "multer": "^1.4.2",
+    "cookie-session": "^2.0.0",
+    "express": "^4.17.2",
+    "forge-apis": "^0.9.2",
+    "request": "^2.88.2",
+    "multer": "^1.4.4",
     "socket.io": "^2.2.0"
   }
 }
