@@ -191,13 +191,11 @@ router.post('/datamanagement/v1/oss/object', multer({ dest: 'uploads/' }).single
         };
 
         try{
-            // migrate to use new S3 upload API
             const objectApi = new ObjectsApi();
             let objects = [];
             objects.push({ objectKey: req.file.originalname, data: data})
             const resources = await objectApi.uploadResources( bucketKey, objects, {}, oauth_client, oauth_token )
-            const signedObj = await objectApi.getS3DownloadURL(bucketKey, req.file.originalname, null, oauth_client, oauth_token);
-            res.status(200).end( signedObj.body.url);
+            res.status(200).end( resources[0].completed.objectId );
         } catch (err) {
             next(err);
         }

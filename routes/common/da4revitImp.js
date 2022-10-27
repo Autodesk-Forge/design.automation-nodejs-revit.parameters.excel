@@ -135,7 +135,7 @@ function cancelWorkitem(workItemId, access_token) {
 }
 
 
-function importExcel(inputRvtS3Url, inputExcS3Url, inputJson, outputRvtS3Url, projectId, createVersionBody, signedS3Info, access_token_3Legged, access_token_2Legged){
+function importExcel(inputRvtS3Url, inputExcS3Url, inputJson, outputRvtS3Url, projectId, createVersionBody, access_token_3Legged, access_token_2Legged){
     return new Promise(function (resolve, reject) {
 
         const workitemBody = {
@@ -144,17 +144,26 @@ function importExcel(inputRvtS3Url, inputExcS3Url, inputJson, outputRvtS3Url, pr
             arguments: {
                 inputFile: {
                     url: inputRvtS3Url,
-                },
+                    headers:{
+                        Authorization: 'Bearer ' + access_token_3Legged.access_token,
+                    },
+            },
                 inputJson: {
                     url: "data:application/json," + JSON.stringify(inputJson)
                 },
                 inputXls: {
                     url: inputExcS3Url,
+                    headers:{
+                        Authorization: 'Bearer ' + access_token_2Legged.access_token,
+                    },
                 },
 
                 outputRvt: {
                     verb: 'put',
                     url: outputRvtS3Url,
+                    headers:{
+                        Authorization: 'Bearer ' + access_token_3Legged.access_token,
+                    },
                 },
                 onComplete: {
                     verb: "post",
@@ -187,7 +196,6 @@ function importExcel(inputRvtS3Url, inputExcS3Url, inputJson, outputRvtS3Url, pr
                 workitemList.push({
                     workitemId: resp.id,
                     projectId: projectId,
-                    signedS3Info:signedS3Info,
                     createVersionData: createVersionBody,
                     access_token_3Legged: access_token_3Legged
                 })
@@ -211,7 +219,7 @@ function importExcel(inputRvtS3Url, inputExcS3Url, inputJson, outputRvtS3Url, pr
 }
 
 
-function exportExcel(inputRvtS3Url, inputJson,outputExlUrl, signedS3Info, access_token_2Legged) {
+function exportExcel(inputRvtS3Url, inputJson,outputExlUrl, objectInfo, access_token_2Legged, user_token) {
 
     return new Promise(function (resolve, reject) {
 
@@ -219,14 +227,20 @@ function exportExcel(inputRvtS3Url, inputJson,outputExlUrl, signedS3Info, access
                 activityId: designAutomation.nickname + '.'+designAutomation.activity_name + '+'+ designAutomation.appbundle_activity_alias,
                 arguments: {
                     inputFile: {
-                        url: inputRvtS3Url
+                        url: inputRvtS3Url,
+                        headers:{
+                            Authorization: 'Bearer ' + user_token.access_token,
+                        },
                     },
                     inputJson: { 
                         url: "data:application/json,"+ JSON.stringify(inputJson)
                      },
                      outputXls: {
                         verb: 'put',
-                        url: outputExlUrl
+                        url: outputExlUrl,
+                        headers:{
+                            Authorization: 'Bearer ' + access_token_2Legged.access_token,
+                        },
                     },
                     onComplete: {
                         verb: "post",
@@ -258,7 +272,7 @@ function exportExcel(inputRvtS3Url, inputJson,outputExlUrl, signedS3Info, access
                 workitemList.push({
                     workitemId: resp.id,
                     access_token_2Legged: access_token_2Legged,
-                    signedS3Info: signedS3Info,
+                    objectInfo: objectInfo,
                 })
 
                 if (response.statusCode >= 400) {
@@ -334,35 +348,10 @@ async function getNewCreatedStorageInfo(projectId, folderId, fileName, oauth_cli
         console.log('failed to create a storage.');
         return null;
     }
-
-    // setup the url of the new storage
-    const strList = storage.body.data.id.split('/');
-    if (strList.length !== 2) {
-        console.log('storage id is not correct');
-        return null;
-    }
-    // create signed s3 url
-    let response = null;
-    try{
-        const object = new ObjectsApi();
-        response = await object.getS3UploadURL(AUTODESK_HUB_BUCKET_KEY,strList[1], null, oauth_client, oauth_token);
-    }catch( err ){
-        console.log('failed to get signed S3 url.');
-        return null;
-    }
-
     return {
-        "StorageId": storage.body.data.id,
-        "StorageUrl": response.body.urls[0],
-        "SignedS3Info": {
-            BucketKey: AUTODESK_HUB_BUCKET_KEY,
-            ObjectKey: strList[1],
-            UploadKey: response.body.uploadKey
-        }
-    };
+        "StorageId": storage.body.data.id
+    }
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////
